@@ -135,7 +135,10 @@
             // Success Handling
             if (data.session) {
                 // Email confirmation is disabled in Supabase, login instant
-                window.location.href = 'learn.html';
+                // Success
+const redirectUrl = localStorage.getItem('prakior_redirect_url') || 'learn.html';
+localStorage.removeItem('prakior_redirect_url'); // Clear it after reading
+window.location.href = redirectUrl;
             } else {
                 // Email confirmation is enabled in Supabase, show message
                 msgContainer.className = 'px-4 py-3 rounded-xl text-sm font-bold border flex items-center gap-2 bg-emerald-50 text-emerald-700 border-emerald-200';
