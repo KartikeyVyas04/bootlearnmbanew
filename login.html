@@ -124,7 +124,10 @@
             }
 
             // Success
-            window.location.href = 'learn.html';
+            // Success
+const redirectUrl = localStorage.getItem('prakior_redirect_url') || 'learn.html';
+localStorage.removeItem('prakior_redirect_url'); // Clear it after reading
+window.location.href = redirectUrl;
         });
     </script>
 </body>
