@@ -25,9 +25,15 @@
 
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 
-        /* Accordion Smooth Expand */
         .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
-        .accordion-body.open { max-height: 3000px; } /* Large enough for big modules */
+        .accordion-body.open { max-height: 3000px; }
+        
+        /* Toast Animation */
+        @keyframes slideUp {
+            0% { transform: translateY(100%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .toast-animate { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 
     <script>
@@ -81,7 +87,7 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 flex flex-col lg:flex-row gap-8 w-full">
         
-        <div class="w-full lg:w-2/3 flex flex-col gap-8">
+        <div class="w-full lg:w-[65%] flex flex-col gap-8">
             
             <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
                 <div class="absolute right-0 top-0 w-48 h-48 bg-amber-50 rounded-bl-full -z-10"></div>
@@ -104,34 +110,37 @@
             </div>
 
             <div>
-                <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2 mb-5 tracking-tight">
-                    <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div> Continue Learning
-                </h2>
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2 tracking-tight">
+                        <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div> Currently Learning
+                    </h2>
+                </div>
                 
-                <div id="loading-state" class="text-center py-10 text-slate-400 font-medium animate-pulse">Loading modules...</div>
+                <div id="loading-state" class="text-center py-10 text-slate-400 font-medium animate-pulse">Loading curriculum...</div>
 
-                <div id="in-progress-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-5 hidden">
+                <div id="in-progress-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 hidden">
                     </div>
 
-                <div id="empty-state" class="hidden bg-white rounded-2xl border border-slate-200 border-dashed p-10 text-center flex-col items-center justify-center">
-                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 mb-4 mx-auto">
+                <div id="empty-state" class="hidden bg-white rounded-2xl border border-slate-200 border-dashed p-12 text-center flex-col items-center justify-center">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 mb-4 mx-auto shadow-sm">
                         <i data-lucide="play-circle" class="w-8 h-8"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-2">No videos in progress</h3>
-                    <p class="text-sm text-slate-500 max-w-sm mx-auto">Select a topic from the curriculum syllabus on the right to start your preparation!</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">No active lessons</h3>
+                    <p class="text-sm text-slate-500 max-w-sm mx-auto">Select a topic from the curriculum syllabus on the right to start watching.</p>
                 </div>
             </div>
             
         </div>
 
-        <div class="w-full lg:w-1/3 flex flex-col">
+        <div class="w-full lg:w-[35%] flex flex-col">
             <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2 mb-5 tracking-tight">
-                <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div> Course Curriculum
+                <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div> Curriculum
             </h2>
 
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] flex flex-col overflow-hidden">
-                <div class="p-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Syllabus Contents</p>
+                <div class="p-4 border-b border-slate-100 bg-slate-50/80 shrink-0 flex justify-between items-center">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Modules</p>
+                    <i data-lucide="list" class="w-4 h-4 text-slate-400"></i>
                 </div>
                 
                 <div id="accordion-container" class="flex-1 overflow-y-auto custom-scrollbar">
@@ -140,6 +149,11 @@
         </div>
 
     </main>
+
+    <div id="toast-notification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 hidden z-[200]">
+        <i data-lucide="lock" class="w-5 h-5 text-amber-400"></i>
+        <span class="text-sm font-medium">Please start the video before marking it as complete.</span>
+    </div>
 
     <footer class="border-t border-slate-200 bg-white py-8 text-center mt-auto">
         <p class="text-sm font-semibold text-slate-500">&copy; 2026 BootLearn-MBA by Prakior. Curated Free Learning.</p>
@@ -155,12 +169,12 @@
         let totalVideos = 0;
         let completedVideos = [];
         let inProgressVideos = []; 
+        let trackingData = {}; // 🟢 NEW: Stores start/completion timestamps for Admin
         let allVideoData = {}; 
 
         // === AUTHENTICATION & INITIALIZATION ===
         async function initPage() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
             if (!session) { window.location.href = 'login.html'; return; }
 
             currentUserEmail = session.user.email;
@@ -183,7 +197,7 @@
         async function loadProgressFromDB() {
             const { data } = await supabaseClient
                 .from('user_progress')
-                .select('completed_videos, in_progress_videos')
+                .select('completed_videos, in_progress_videos, tracking_data')
                 .eq('user_email', currentUserEmail)
                 .eq('module', 'lrdi')
                 .maybeSingle();
@@ -191,6 +205,7 @@
             if (data) {
                 if (data.completed_videos) completedVideos = data.completed_videos;
                 if (data.in_progress_videos) inProgressVideos = data.in_progress_videos;
+                if (data.tracking_data) trackingData = data.tracking_data;
             }
         }
 
@@ -201,67 +216,70 @@
                     user_email: currentUserEmail, 
                     module: 'lrdi', 
                     completed_videos: completedVideos,
-                    in_progress_videos: inProgressVideos
+                    in_progress_videos: inProgressVideos,
+                    tracking_data: trackingData // 🟢 Saving detailed timestamps
                 }, { onConflict: 'user_email, module' });
 
             updateProgressBar();
         }
 
+        // === SHOW TOAST NOTIFICATION ===
+        function showToast() {
+            const toast = document.getElementById('toast-notification');
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-animate');
+            setTimeout(() => { toast.classList.add('hidden'); toast.classList.remove('toast-animate'); }, 3500);
+        }
+
         // === ACTIONS ===
+        
+        // 1. Triggered when clicking a video link
         window.markInProgress = function(videoId) {
-            if (completedVideos.includes(videoId) || inProgressVideos.includes(videoId)) return;
+            // Initialize tracking object if new
+            if (!trackingData[videoId]) trackingData[videoId] = {};
 
-            inProgressVideos.push(videoId);
-            saveProgressToDB(); 
-            
-            // Instantly refresh UI
-            renderInProgressSection();
-            updateSidebarBadges(videoId);
-        }
-
-        window.toggleVideoStatus = function(videoId) {
-            const isDone = completedVideos.includes(videoId);
-            
-            if (isDone) {
-                // Unmark
-                completedVideos = completedVideos.filter(id => id !== videoId);
+            // If not already in progress, add it and log start time
+            if (!inProgressVideos.includes(videoId)) {
+                inProgressVideos.push(videoId);
+                trackingData[videoId].startedAt = new Date().toISOString();
+                saveProgressToDB(); 
+                
+                // Instantly refresh UI
+                renderInProgressSection();
+                syncUI();
             } else {
-                // Mark Done (and implicitly ensure it counts as "in progress" historically)
-                completedVideos.push(videoId);
-                if (!inProgressVideos.includes(videoId)) inProgressVideos.push(videoId);
+                // Just log another view
+                trackingData[videoId].lastViewedAt = new Date().toISOString();
+                saveProgressToDB();
             }
-            
-            saveProgressToDB(); 
-            
-            // Re-render main area and update specific sidebar item
-            renderInProgressSection();
-            updateSidebarBadges(videoId);
         }
 
-        function updateSidebarBadges(videoId) {
+        // 2. Triggered when clicking checkmark/done button
+        window.toggleVideoStatus = function(videoId) {
             const isDone = completedVideos.includes(videoId);
             const isInProg = inProgressVideos.includes(videoId);
             
-            // Update Checkmark in sidebar
-            const checkBtn = document.getElementById(`side-check-${videoId}`);
-            if (checkBtn) {
-                if (isDone) {
-                    checkBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 fill-emerald-100"></i>`;
-                } else {
-                    checkBtn.innerHTML = `<i data-lucide="circle" class="w-5 h-5 text-slate-300 group-hover:text-indigo-400 transition-colors"></i>`;
-                }
+            // 🔒 LOGIC LOCK: Cannot complete if not started
+            if (!isInProg && !isDone) {
+                showToast();
+                return;
             }
 
-            // Update Tag in sidebar
-            const tagContainer = document.getElementById(`side-tag-${videoId}`);
-            if (tagContainer) {
-                if (isDone) {
-                    tagContainer.innerHTML = ''; // Keep it clean when done
-                } else if (isInProg) {
-                    tagContainer.innerHTML = `<span class="bg-amber-100 text-amber-700 text-[9px] font-bold px-1.5 py-0.5 rounded ml-2">IN PROGRESS</span>`;
-                }
+            if (!trackingData[videoId]) trackingData[videoId] = {};
+
+            if (isDone) {
+                // Undo
+                completedVideos = completedVideos.filter(id => id !== videoId);
+                trackingData[videoId].completedAt = null;
+            } else {
+                // Mark Done
+                completedVideos.push(videoId);
+                trackingData[videoId].completedAt = new Date().toISOString();
             }
-            lucide.createIcons();
+            
+            saveProgressToDB(); 
+            renderInProgressSection();
+            syncUI();
         }
 
         function updateProgressBar() {
@@ -272,9 +290,48 @@
             document.getElementById('progress-count').innerText = `${completedVideos.length} of ${totalVideos} lectures completed`;
         }
 
+        // === SYNCHRONIZE ENTIRE UI ===
+        // This function dynamically updates all badges and buttons based on exact arrays, preventing desync.
+        function syncUI() {
+            Object.values(allVideoData).flat().forEach(video => {
+                const vId = video.id;
+                const isDone = completedVideos.includes(vId);
+                const isInProg = inProgressVideos.includes(vId);
+                const isLocked = !isInProg && !isDone;
+
+                // Update Sidebar Check Buttons
+                const checkBtn = document.getElementById(`side-check-${vId}`);
+                if (checkBtn) {
+                    if (isDone) {
+                        checkBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 fill-emerald-100"></i>`;
+                        checkBtn.className = "mt-0.5 shrink-0 transition-transform hover:scale-110";
+                    } else if (isLocked) {
+                        checkBtn.innerHTML = `<div class="bg-slate-100 p-1 rounded-full"><i data-lucide="lock" class="w-3 h-3 text-slate-400"></i></div>`;
+                        checkBtn.className = "mt-0.5 shrink-0 cursor-not-allowed opacity-80";
+                    } else {
+                        checkBtn.innerHTML = `<i data-lucide="circle" class="w-5 h-5 text-slate-300 hover:text-indigo-400 transition-colors"></i>`;
+                        checkBtn.className = "mt-0.5 shrink-0 transition-transform hover:scale-110";
+                    }
+                }
+
+                // Update Sidebar Tags
+                const tagContainer = document.getElementById(`side-tag-${vId}`);
+                if (tagContainer) {
+                    if (isDone) {
+                        tagContainer.innerHTML = `<span class="bg-emerald-50 text-emerald-600 text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 border border-emerald-200 align-middle">DONE</span>`;
+                    } else if (isInProg) {
+                        tagContainer.innerHTML = `<span class="bg-amber-50 text-amber-600 text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 border border-amber-200 align-middle">IN PROGRESS</span>`;
+                    } else {
+                        tagContainer.innerHTML = '';
+                    }
+                }
+            });
+            lucide.createIcons();
+        }
+
         // === UI RENDERERS ===
 
-        // 1. Renders the Main "Large Card" for In-Progress section
+        // Renders Main "Featured Card" for In-Progress section
         function createMainCard(video) {
             const isPlaylist = video.id.startsWith('PL');
             const thumbnailUrl = isPlaylist 
@@ -283,29 +340,30 @@
             const url = isPlaylist ? `https://www.youtube.com/playlist?list=${video.id}` : `https://www.youtube.com/watch?v=${video.id}`;
             
             return `
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-amber-300 hover:-translate-y-1 transition-all duration-300 flex flex-col group relative">
-                    
-                    <div class="absolute top-6 left-6 z-20 pointer-events-none">
-                        <div class="bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-amber-400">
-                            <i data-lucide="clock" class="w-3 h-3"></i> In Progress
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 transition-all duration-300 flex flex-col group relative overflow-hidden">
+                    <a href="${url}" target="_blank" onclick="markInProgress('${video.id}')" class="relative w-full pt-[56.25%] rounded-xl overflow-hidden block">
+                        
+                        <div class="absolute top-2 left-2 z-20">
+                            <span class="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm border border-amber-400/50">
+                                <i data-lucide="clock" class="w-3 h-3"></i> Learning
+                            </span>
                         </div>
-                    </div>
 
-                    <a href="${url}" target="_blank" class="relative w-full pt-[56.25%] rounded-xl overflow-hidden shadow-sm block">
-                        <img src="${thumbnailUrl}" alt="${video.title}" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="${thumbnailUrl}" alt="${video.title}" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center">
-                            <div class="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-amber-500 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity scale-75 group-hover:scale-100 duration-300">
+                            <div class="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-indigo-600 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity scale-75 group-hover:scale-100 duration-300">
                                 <i data-lucide="play" class="w-5 h-5 ml-1"></i>
                             </div>
                         </div>
                     </a>
-                    <div class="mt-4 flex-1 flex flex-col">
-                        <h4 class="font-bold text-slate-900 text-sm line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors">${video.title}</h4>
+                    
+                    <div class="mt-4 flex-1 flex flex-col px-1">
+                        <h4 class="font-extrabold text-slate-900 text-sm line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">${video.title}</h4>
                         <p class="text-xs text-slate-500 font-medium mt-1"><i data-lucide="youtube" class="w-3 h-3 inline text-red-500 mr-1"></i> ${video.channel}</p>
                         
-                        <button onclick="toggleVideoStatus('${video.id}')" class="mt-auto pt-4">
-                            <div class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-colors border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-emerald-300 hover:text-emerald-600">
-                                <i data-lucide="check" class="w-4 h-4"></i> Mark as Done
+                        <button onclick="toggleVideoStatus('${video.id}')" class="mt-auto pt-5">
+                            <div class="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all border border-slate-200 text-slate-600 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-700 group/btn">
+                                <i data-lucide="check" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i> Mark Complete
                             </div>
                         </button>
                     </div>
@@ -313,34 +371,22 @@
             `;
         }
 
-        // 2. Renders the Compact List Item for the Sidebar
+        // Renders the Sidebar Curriculum List
         function createSidebarItem(video, index) {
             const isPlaylist = video.id.startsWith('PL');
             const url = isPlaylist ? `https://www.youtube.com/playlist?list=${video.id}` : `https://www.youtube.com/watch?v=${video.id}`;
             
-            const isDone = completedVideos.includes(video.id);
-            const isInProgress = inProgressVideos.includes(video.id);
-
-            let checkIcon = isDone 
-                ? `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 fill-emerald-100"></i>`
-                : `<i data-lucide="circle" class="w-5 h-5 text-slate-300 group-hover:text-indigo-400 transition-colors"></i>`;
-
-            let tagHtml = '';
-            if (isInProgress && !isDone) {
-                tagHtml = `<span class="bg-amber-100 text-amber-700 text-[9px] font-bold px-1.5 py-0.5 rounded ml-2">IN PROGRESS</span>`;
-            }
-
             return `
                 <div class="flex items-start gap-3 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group">
-                    <button onclick="toggleVideoStatus('${video.id}')" id="side-check-${video.id}" class="mt-0.5 shrink-0" title="Toggle Completed">
-                        ${checkIcon}
-                    </button>
+                    
+                    <button onclick="toggleVideoStatus('${video.id}')" id="side-check-${video.id}" title="Toggle Completed">
+                        </button>
                     
                     <div class="flex-1 min-w-0">
                         <a href="${url}" target="_blank" onclick="markInProgress('${video.id}')" class="block">
                             <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
                                 ${index + 1}. ${video.title} 
-                                <span id="side-tag-${video.id}">${tagHtml}</span>
+                                <span id="side-tag-${video.id}"></span>
                             </h4>
                             <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                                 <span><i data-lucide="${isPlaylist ? 'list-video' : 'play-circle'}" class="w-3 h-3 inline mr-0.5"></i> ${video.duration || 'Video'}</span>
@@ -351,7 +397,7 @@
             `;
         }
 
-        // 3. Logic to update the Main Section
+        // Render In Progress Top Section
         function renderInProgressSection() {
             const grid = document.getElementById('in-progress-grid');
             const emptyState = document.getElementById('empty-state');
@@ -368,7 +414,7 @@
             if (activeVideos.length > 0) {
                 grid.classList.remove('hidden');
                 emptyState.classList.add('hidden');
-                // Render newest clicked videos first
+                // Show latest clicked first
                 grid.innerHTML = activeVideos.reverse().map(v => createMainCard(v)).join('');
             } else {
                 grid.classList.add('hidden');
@@ -385,12 +431,11 @@
             .then(data => {
                 document.getElementById('loading-state').classList.add('hidden');
                 allVideoData = data; 
-                
                 totalVideos = Object.values(data).reduce((acc, curr) => acc + curr.length, 0);
 
                 renderInProgressSection();
 
-                // Render Sidebar Accordions
+                // Build Sidebar
                 const container = document.getElementById('accordion-container');
                 container.innerHTML = Object.keys(data).map((category, catIndex) => {
                     const videos = data[category];
@@ -414,7 +459,7 @@
                     `;
                 }).join('');
                 
-                lucide.createIcons();
+                syncUI(); // Inject locks, checks, and tags
                 updateProgressBar();
             })
             .catch(err => {
@@ -457,3 +502,5 @@
     </script>
 </body>
 </html>
+
+
