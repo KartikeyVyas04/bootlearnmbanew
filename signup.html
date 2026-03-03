@@ -249,7 +249,7 @@
             
             inputs.forEach(inp => {
                 if (!inp.checkValidity()) {
-                    inp.classList.add('touched'); // Triggers the CSS error styles
+                    inp.classList.add('touched'); 
                     valid = false;
                 } else {
                     inp.classList.remove('touched');
@@ -310,7 +310,7 @@
                 const { data, error } = await supabaseClient.auth.signUp({
                     email: email,
                     password: password,
-                    options: { data: adminTrackingData } // This saves to user_metadata for admin viewing!
+                    options: { data: adminTrackingData } 
                 });
 
                 if (error) {
@@ -330,15 +330,18 @@
                     localStorage.removeItem('prakior_redirect_url');
                     window.location.href = redirectUrl;
                 } else {
-                    // If Email Confirmation is required
+                    // 🟢 AUTO REDIRECT FIX (If Email Confirmation is required)
                     globalError.classList.remove('hidden', 'bg-red-50', 'text-red-600', 'border-red-100');
                     globalError.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-                    globalError.innerHTML = `<i data-lucide="mail-check" class="w-4 h-4 shrink-0"></i> <span>Success! Please check your email to verify your account before logging in.</span>`;
+                    globalError.innerHTML = `<i data-lucide="mail-check" class="w-4 h-4 shrink-0"></i> <span>Success! Please check your email to verify. Redirecting to login...</span>`;
                     lucide.createIcons();
                     
-                    nextBtn.disabled = false;
-                    nextBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-                    nextBtn.innerHTML = `<span>Complete Sign Up</span> <i data-lucide="check" class="w-4 h-4"></i>`;
+                    nextBtn.innerHTML = `<span>Redirecting...</span>`;
+                    
+                    // Auto-redirect to login page after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 3000);
                 }
             }
         });
