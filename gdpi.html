@@ -14,12 +14,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         html { scroll-behavior: smooth; }
         
-        .mobile-nav { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
-        .mobile-nav.show { transform: translateX(0); }
-        .nav-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
-        .nav-overlay.show { opacity: 1; pointer-events: auto; }
-        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-
         /* 🟢 CUSTOM FLOATING CHAT ANIMATION */
         @keyframes floatChat1 {
             0%, 100% { transform: translateY(0px) scale(1); }
@@ -45,47 +39,8 @@
 </head>
 <body class="text-slate-800 antialiased selection:bg-purple-100 selection:text-purple-900 flex flex-col min-h-screen hidden" id="page-content">
 
-    <nav class="sticky top-0 z-50 glass-nav border-b border-slate-200/80 px-6 py-4 flex justify-between items-center shadow-sm">
-        <a href="index.html" class="flex items-center gap-3 group">
-            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm group-hover:scale-105 transition-transform">P</div>
-            <span class="text-lg font-extrabold text-slate-900 tracking-tight">BootLearn-MBA</span>
-        </a>
-        
-        <button class="md:hidden text-slate-600 hover:text-purple-600 transition-colors" id="menu-toggle">
-            <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
-
-        <ul class="hidden md:flex items-center gap-1">
-            <li><a href="index.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">Home</a></li>
-            <li><a href="quant.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">Quant</a></li>
-            <li><a href="lrdi.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">LR-DI</a></li>
-            <li><a href="verbal.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">Verbal</a></li>
-            <li><a href="mocks.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">Mock Tests</a></li>
-            <li><a href="updates.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors">Latest Updates</a></li>
-            <li><a href="gdpi.html" class="px-4 py-2 rounded-lg text-sm font-bold bg-purple-500 text-white shadow-sm transition-colors">GD/PI</a></li>
-            <li>
-                <button onclick="handleLogout()" class="ml-4 px-4 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100 shadow-sm">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> Logout
-                </button>
-            </li>
-        </ul>
-    </nav>
-
-    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] nav-overlay" id="overlay"></div>
-    <ul class="fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[100] flex flex-col pt-20 mobile-nav border-r border-slate-200" id="nav-links">
-        <div class="absolute top-4 left-6 flex items-center gap-3">
-            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
-            <span class="text-lg font-extrabold text-slate-900 tracking-tight">Menu</span>
-        </div>
-        <li><a href="index.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Home</a></li>
-        <li><a href="quant.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Quant</a></li>
-        <li><a href="lrdi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">LR-DI</a></li>
-        <li><a href="verbal.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Verbal</a></li>
-        <li><a href="mocks.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Mock Tests</a></li>
-        <li><a href="updates.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Latest Updates</a></li>
-        <li><a href="gdpi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold bg-purple-50 text-purple-600">GD/PI</a></li>
-        <li><button onclick="handleLogout()" class="w-full text-left px-6 py-4 border-b border-slate-100 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Logout</button></li>
-    </ul>
+    <div id="navbar-container"></div>
+    <script src="nav.js"></script>
 
     <main class="flex-1 max-w-4xl mx-auto px-6 py-16 flex flex-col items-center justify-center w-full">
         
@@ -138,35 +93,14 @@
     </footer>
 
     <script>
-        const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
-        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        async function initPage() {
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
-            if (!session) { window.location.href = 'login.html'; return; }
-            document.getElementById('page-content').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        async function handleLogout() {
-            await supabaseClient.auth.signOut();
-            window.location.href = 'login.html';
-        }
-
-        const toggleBtn = document.getElementById('menu-toggle');
-        const navLinks = document.getElementById('nav-links');
-        const overlay = document.getElementById('overlay');
-        function toggleMenu() {
-            navLinks.classList.toggle('show');
-            overlay.classList.toggle('show');
-            document.body.style.overflow = navLinks.classList.contains('show') ? 'hidden' : 'auto';
-        }
-        toggleBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
-        navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', toggleMenu));
-
-        initPage();
+        // Unhide the page content once the pre-loader verifies the user is logged in
+        document.getElementById('page-content').classList.remove('hidden');
+        
+        // Render the icons inside the main content area
+        lucide.createIcons();
+        
+        /* Note: All Supabase initialization, authentication checks, 
+           and mobile menu toggle logic are now handled globally inside nav.js! */
     </script>
 </body>
 </html>
