@@ -7,17 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900 px-4">
 
     <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-500/30 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-500/30 rounded-full blur-[100px] pointer-events-none"></div>
 
-    <div class="w-full max-w-md p-6 relative z-10">
+    <div class="w-full max-w-md relative z-10">
         
         <div class="text-center mb-8">
             <a href="index.html" class="inline-flex items-center gap-3 group">
@@ -33,7 +36,8 @@
             <form id="loginForm" class="space-y-5">
                 
                 <div id="error-msg" class="hidden bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-bold border border-red-100 flex items-center gap-2">
-                    <i data-lucide="alert-circle" class="w-4 h-4"></i> <span id="error-text">Invalid credentials</span>
+                    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i> 
+                    <span id="error-text">Invalid credentials</span>
                 </div>
 
                 <div>
@@ -59,8 +63,8 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-slate-900/20 flex justify-center items-center gap-2 mt-2">
-                    Sign In <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <button type="submit" id="submitBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-slate-900/20 flex justify-center items-center gap-2 mt-2">
+                    <span>Sign In</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </form>
 
@@ -73,38 +77,55 @@
     <script>
         lucide.createIcons();
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // 🟢 INITIALIZE SUPABASE (FIXED NAMING COLLISION)
+        const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
+        
+        // Use supabaseClient instead of supabase to avoid CDN conflict
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Check if already logged in
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if (session) window.location.href = 'learn.html';
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('error-msg');
             const errorText = document.getElementById('error-text');
+            const submitBtn = document.getElementById('submitBtn');
 
-            // Retrieve registered users from local storage
-            const users = JSON.parse(localStorage.getItem('prakior_users')) || [];
-            
-            // Check if user exists and password matches
-            const user = users.find(u => u.email === email && u.password === password);
+            // UI Loading state
+            submitBtn.innerHTML = `<span>Signing in...</span> <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>`;
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75');
+            lucide.createIcons();
 
-            if (user) {
-                // Success: Set current user session
-                localStorage.setItem('prakior_current_user', user.email);
-                localStorage.setItem('prakior_current_name', user.name);
-                
-                // Redirect to the learning dashboard
-                window.location.href = 'learn.html';
-            } else {
-                // Fail: Show error
+            // Call Supabase API
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                // Show error
                 errorDiv.classList.remove('hidden');
                 errorText.innerText = "Invalid email or password.";
+                
+                // Reset button
+                submitBtn.innerHTML = `<span>Sign In</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75');
+                lucide.createIcons();
+                return;
             }
-        });
 
-        // If already logged in, redirect away from login page
-        if (localStorage.getItem('prakior_current_user')) {
+            // Success
             window.location.href = 'learn.html';
-        }
+        });
     </script>
 </body>
 </html>
