@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BootLearn-MBA | Quant Curriculum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        html { scroll-behavior: smooth; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .mobile-nav { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+        .mobile-nav.show { transform: translateX(0); }
+        .nav-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        .nav-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
+        .accordion-body.open { max-height: 3000px; }
+        
+        /* Custom Toast Animation */
+        @keyframes slideUp {
+            0% { transform: translate(-50%, 100%); opacity: 0; }
+            10% { transform: translate(-50%, 0); opacity: 1; }
+            90% { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, 100%); opacity: 0; }
+        }
+        .toast-animate { animation: slideUp 4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+
+    <script>
+        let hasToken = false;
+        for (let i = 0; i < localStorage.length; i++) {
+            if (localStorage.key(i).startsWith('sb-') && localStorage.key(i).endsWith('-auth-token')) {
+                hasToken = true; break;
+            }
+        }
+        if (!hasToken) window.location.href = 'login.html';
+    </script>
+</head>
+<body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900 flex flex-col min-h-screen hidden" id="page-content">
+
+    <nav class="sticky top-0 z-50 glass-nav border-b border-slate-200/80 px-6 py-4 flex justify-between items-center shadow-sm">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm group-hover:scale-105 transition-transform">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">BootLearn-MBA</span>
+        </a>
+        
+        <button class="md:hidden text-slate-600 hover:text-indigo-600 transition-colors" id="menu-toggle">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <ul class="hidden md:flex items-center gap-1">
+            <li><a href="index.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Home</a></li>
+            <li><a href="quant.html" class="px-4 py-2 rounded-lg text-sm font-bold bg-indigo-600 text-white shadow-sm transition-colors">Quant</a></li>
+            <li><a href="lrdi.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">LR-DI</a></li>
+            <li><a href="verbal.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Verbal</a></li>
+            <li><a href="mocks.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Mock Tests</a></li>
+            <li>
+                <button onclick="handleLogout()" class="ml-4 px-4 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100 shadow-sm">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] nav-overlay" id="overlay"></div>
+    <ul class="fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[100] flex flex-col pt-20 mobile-nav border-r border-slate-200" id="nav-links">
+        <div class="absolute top-4 left-6 flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">Menu</span>
+        </div>
+        <li><a href="index.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Home</a></li>
+        <li><a href="quant.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold bg-indigo-50 text-indigo-600">Quant</a></li>
+        <li><a href="lrdi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">LR-DI</a></li>
+        <li><a href="verbal.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Verbal</a></li>
+        <li><button onclick="handleLogout()" class="w-full text-left px-6 py-4 border-b border-slate-100 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Logout</button></li>
+    </ul>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 lg:py-12 flex flex-col lg:flex-row gap-8 w-full">
+        
+        <div class="w-full lg:w-[65%] flex flex-col gap-8">
+            
+            <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-48 h-48 bg-indigo-50 rounded-bl-full -z-10"></div>
+                
+                <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+                    Quantitative Aptitude
+                </h1>
+                <p class="text-slate-500 font-medium mb-6 text-sm md:text-base">Welcome back, <span id="user-display-name" class="text-indigo-600 font-bold">Student</span>!</p>
+                
+                <div class="w-full max-w-xl">
+                    <div class="flex justify-between text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
+                        <span>Course Mastery</span>
+                        <span id="progress-text" class="text-indigo-600">0%</span>
+                    </div>
+                    <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full transition-all duration-700 ease-out" style="width: 0%;"></div>
+                    </div>
+                    <p id="progress-count" class="text-xs text-slate-400 mt-2 font-medium">0 of 0 lectures completed</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-5">
+                    <h2 id="dynamic-section-title" class="text-xl font-extrabold text-slate-900 flex items-center gap-2 tracking-tight">
+                        <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div> Currently Learning
+                    </h2>
+                </div>
+                
+                <div id="loading-state" class="text-center py-10 text-slate-400 font-medium animate-pulse">Loading curriculum...</div>
+
+                <div id="in-progress-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 hidden">
+                    </div>
+
+                <div id="completed-state" class="hidden bg-white rounded-2xl border border-slate-200 border-dashed p-12 text-center flex-col items-center justify-center">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 mb-4 mx-auto shadow-sm">
+                        <i data-lucide="award" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Curriculum Completed!</h3>
+                    <p class="text-sm text-slate-500 max-w-sm mx-auto">You have mastered all the topics in Quant. Phenomenal work!</p>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="w-full lg:w-[35%] flex flex-col">
+            <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2 mb-5 tracking-tight">
+                <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div> Curriculum
+            </h2>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/80 shrink-0 flex justify-between items-center">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Modules</p>
+                    <i data-lucide="list" class="w-4 h-4 text-slate-400"></i>
+                </div>
+                
+                <div id="accordion-container" class="flex-1 overflow-y-auto custom-scrollbar">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-notification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 hidden z-[200] border border-slate-700 w-[90%] max-w-sm">
+        <i data-lucide="lock" class="w-5 h-5 text-amber-400 shrink-0"></i>
+        <span class="text-sm font-medium">Please click the video thumbnail to start it before marking complete.</span>
+    </div>
+
+    <footer class="border-t border-slate-200 bg-white py-8 text-center mt-auto">
+        <p class="text-sm font-semibold text-slate-500">&copy; 2026 BootLearn-MBA by Prakior. Curated Free Learning.</p>
+    </footer>
+
+    <script>
+        // 🟢 INITIALIZE SUPABASE
+        const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentUserEmail = null;
+        let totalVideos = 0;
+        let completedVideos = [];
+        let inProgressVideos = []; 
+        let trackingData = {}; 
+        let allVideoData = {}; 
+        let flatCurriculum = [];
+
+        // === AUTH & INITIALIZE ===
+        async function initPage() {
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            if (!session) { window.location.href = 'login.html'; return; }
+
+            currentUserEmail = session.user.email;
+            const userName = session.user.user_metadata?.full_name || currentUserEmail.split('@')[0];
+            
+            document.getElementById('page-content').classList.remove('hidden');
+            document.getElementById('user-display-name').innerText = userName;
+
+            lucide.createIcons();
+            await loadProgressFromDB(); 
+            loadVideos(); 
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        // === DATABASE LOGIC ===
+        async function loadProgressFromDB() {
+            const { data } = await supabaseClient
+                .from('user_progress')
+                .select('completed_videos, in_progress_videos, tracking_data')
+                .eq('user_email', currentUserEmail)
+                .eq('module', 'quant') // 🟢 SPECIFIC TO QUANT
+                .maybeSingle();
+
+            if (data) {
+                if (data.completed_videos) completedVideos = data.completed_videos;
+                if (data.in_progress_videos) inProgressVideos = data.in_progress_videos;
+                if (data.tracking_data) trackingData = data.tracking_data;
+            }
+        }
+
+        async function saveProgressToDB() {
+            await supabaseClient
+                .from('user_progress')
+                .upsert({ 
+                    user_email: currentUserEmail, 
+                    module: 'quant', // 🟢 SPECIFIC TO QUANT
+                    completed_videos: completedVideos,
+                    in_progress_videos: inProgressVideos,
+                    tracking_data: trackingData
+                }, { onConflict: 'user_email, module' });
+            
+            updateProgressBar();
+        }
+
+        // Show Toast Function
+        function showToast() {
+            const toast = document.getElementById('toast-notification');
+            toast.classList.remove('hidden');
+            
+            toast.classList.remove('toast-animate');
+            void toast.offsetWidth; 
+            toast.classList.add('toast-animate');
+            
+            setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+        }
+
+        // === CORE ACTIONS ===
+        
+        window.markInProgress = function(videoId) {
+            if (!trackingData[videoId]) trackingData[videoId] = {};
+
+            if (!inProgressVideos.includes(videoId)) {
+                inProgressVideos.push(videoId);
+                trackingData[videoId].startedAt = new Date().toISOString();
+                saveProgressToDB(); 
+                
+                setTimeout(() => {
+                    renderInProgressSection();
+                    syncUI();
+                }, 150);
+            } else {
+                trackingData[videoId].lastViewedAt = new Date().toISOString();
+                saveProgressToDB();
+            }
+        }
+
+        window.toggleVideoStatus = function(videoId, isMainCard = false) {
+            const isDone = completedVideos.includes(videoId);
+            const isInProg = inProgressVideos.includes(videoId);
+            
+            // 🔒 THE LOGIC LOCK
+            if (!isInProg && !isDone) {
+                showToast();
+                return;
+            }
+
+            if (!trackingData[videoId]) trackingData[videoId] = {};
+
+            if (isDone) {
+                // Undo completion
+                completedVideos = completedVideos.filter(id => id !== videoId);
+                trackingData[videoId].completedAt = null;
+            } else {
+                // Mark completion
+                completedVideos.push(videoId);
+                trackingData[videoId].completedAt = new Date().toISOString();
+            }
+            
+            saveProgressToDB(); 
+
+            if (isMainCard && !isDone) {
+                const btnContainer = document.getElementById(`main-btn-${videoId}`);
+                if (btnContainer) {
+                    btnContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4"></i> Completed!`;
+                    btnContainer.className = "w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all bg-emerald-500 text-white shadow-sm shadow-emerald-200 scale-105";
+                }
+                
+                const badgeContainer = document.getElementById(`main-badge-${videoId}`);
+                if (badgeContainer) {
+                    badgeContainer.innerHTML = `<span class="bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm border border-emerald-400/50"><i data-lucide="check-circle-2" class="w-3 h-3"></i> Completed</span>`;
+                }
+
+                lucide.createIcons();
+                syncUI();
+                updateProgressBar();
+
+                setTimeout(() => {
+                    renderInProgressSection();
+                }, 1200);
+
+            } else {
+                renderInProgressSection();
+                syncUI();
+                updateProgressBar();
+            }
+        }
+
+        // === UI RENDERERS ===
+
+        function updateProgressBar() {
+            if (totalVideos === 0) return;
+            const pct = Math.round((completedVideos.length / totalVideos) * 100);
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('progress-text').innerText = `${pct}%`;
+            document.getElementById('progress-count').innerText = `${completedVideos.length} of ${totalVideos} lectures completed`;
+        }
+
+        function syncUI() {
+            flatCurriculum.forEach(video => {
+                const vId = video.id;
+                const isDone = completedVideos.includes(vId);
+                const isInProg = inProgressVideos.includes(vId);
+                const isLocked = !isInProg && !isDone;
+
+                const checkBtn = document.getElementById(`side-check-${vId}`);
+                if (checkBtn) {
+                    if (isDone) {
+                        checkBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 fill-emerald-100"></i>`;
+                        checkBtn.className = "mt-0.5 shrink-0 transition-transform hover:scale-110";
+                    } else if (isLocked) {
+                        checkBtn.innerHTML = `<div class="bg-slate-100 p-1 rounded-full"><i data-lucide="lock" class="w-3 h-3 text-slate-400"></i></div>`;
+                        checkBtn.className = "mt-0.5 shrink-0 cursor-not-allowed opacity-80";
+                    } else {
+                        checkBtn.innerHTML = `<i data-lucide="circle" class="w-5 h-5 text-slate-300 hover:text-indigo-400 transition-colors"></i>`;
+                        checkBtn.className = "mt-0.5 shrink-0 transition-transform hover:scale-110";
+                    }
+                }
+
+                const tagContainer = document.getElementById(`side-tag-${vId}`);
+                if (tagContainer) {
+                    if (isDone) {
+                        tagContainer.innerHTML = `<span class="bg-emerald-50 text-emerald-600 text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 border border-emerald-200 align-middle">DONE</span>`;
+                    } else if (isInProg) {
+                        tagContainer.innerHTML = `<span class="bg-amber-50 text-amber-600 text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 border border-amber-200 align-middle">IN PROGRESS</span>`;
+                    } else {
+                        tagContainer.innerHTML = '';
+                    }
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function createMainCard(video, isTarget = false) {
+            const isPlaylist = video.id.startsWith('PL');
+            const thumbnailUrl = isPlaylist 
+                ? 'https://images.unsplash.com/photo-1596496050827-8299e0220de1?q=80&w=600&auto=format&fit=crop'
+                : `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+            const url = isPlaylist ? `https://www.youtube.com/playlist?list=${video.id}` : `https://www.youtube.com/watch?v=${video.id}`;
+            
+            let badgeHtml = `
+                <span class="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm border border-amber-400/50">
+                    <i data-lucide="clock" class="w-3 h-3"></i> Learning
+                </span>`;
+            
+            if (isTarget) {
+                badgeHtml = `
+                <span class="bg-indigo-600/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm border border-indigo-500/50">
+                    <i data-lucide="target" class="w-3 h-3"></i> Up Next
+                </span>`;
+            }
+
+            return `
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 transition-all duration-300 flex flex-col group relative overflow-hidden">
+                    <a href="${url}" target="_blank" onclick="markInProgress('${video.id}')" class="relative w-full pt-[56.25%] rounded-xl overflow-hidden block">
+                        <div id="main-badge-${video.id}" class="absolute top-2 left-2 z-20">
+                            ${badgeHtml}
+                        </div>
+                        <img src="${thumbnailUrl}" alt="${video.title}" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center">
+                            <div class="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-indigo-600 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity scale-75 group-hover:scale-100 duration-300">
+                                <i data-lucide="play" class="w-5 h-5 ml-1"></i>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="mt-4 flex-1 flex flex-col px-1">
+                        <h4 class="font-extrabold text-slate-900 text-sm line-clamp-2 leading-snug group-hover:text-indigo-600 transition-colors">${video.title}</h4>
+                        <p class="text-xs text-slate-500 font-medium mt-1"><i data-lucide="youtube" class="w-3 h-3 inline text-red-500 mr-1"></i> ${video.channel}</p>
+                        
+                        <button onclick="toggleVideoStatus('${video.id}', true)" class="mt-auto pt-5 focus:outline-none">
+                            <div id="main-btn-${video.id}" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all border border-slate-200 text-slate-600 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-700 group/btn">
+                                <i data-lucide="check" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i> Mark Complete
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createSidebarItem(video, index) {
+            const isPlaylist = video.id.startsWith('PL');
+            const url = isPlaylist ? `https://www.youtube.com/playlist?list=${video.id}` : `https://www.youtube.com/watch?v=${video.id}`;
+            
+            return `
+                <div class="flex items-start gap-3 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group">
+                    <button onclick="toggleVideoStatus('${video.id}')" id="side-check-${video.id}" title="Toggle Completed" class="focus:outline-none">
+                        </button>
+                    
+                    <div class="flex-1 min-w-0">
+                        <a href="${url}" target="_blank" onclick="markInProgress('${video.id}')" class="block">
+                            <h4 class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
+                                ${index + 1}. ${video.title} 
+                                <span id="side-tag-${video.id}"></span>
+                            </h4>
+                            <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                                <span><i data-lucide="${isPlaylist ? 'list-video' : 'play-circle'}" class="w-3 h-3 inline mr-0.5"></i> ${video.duration || 'Video'}</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderInProgressSection() {
+            const grid = document.getElementById('in-progress-grid');
+            const compState = document.getElementById('completed-state');
+            const secTitle = document.getElementById('dynamic-section-title');
+            
+            let activeVideos = [];
+            flatCurriculum.forEach(v => {
+                if (inProgressVideos.includes(v.id) && !completedVideos.includes(v.id)) {
+                    activeVideos.push(v);
+                }
+            });
+
+            if (activeVideos.length > 0) {
+                secTitle.innerHTML = `<div class="w-1.5 h-6 bg-amber-500 rounded-full"></div> Currently Learning`;
+                grid.classList.remove('hidden');
+                compState.classList.add('hidden');
+                grid.innerHTML = activeVideos.reverse().map(v => createMainCard(v)).join('');
+            } else {
+                if (completedVideos.length === flatCurriculum.length && flatCurriculum.length > 0) {
+                    secTitle.innerHTML = `<div class="w-1.5 h-6 bg-emerald-500 rounded-full"></div> Journey Complete`;
+                    grid.classList.add('hidden');
+                    compState.classList.remove('hidden');
+                    compState.classList.add('flex');
+                } else if (flatCurriculum.length > 0) {
+                    let nextVideo = flatCurriculum.find(v => !completedVideos.includes(v.id));
+                    secTitle.innerHTML = `<div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div> Today's Target 🎯`;
+                    grid.classList.remove('hidden');
+                    compState.classList.add('hidden');
+                    grid.innerHTML = createMainCard(nextVideo, true);
+                }
+            }
+            lucide.createIcons();
+        }
+
+        // === DATA INITIALIZATION ===
+        function loadVideos() {
+            // 🟢 Fetching QUANTS JSON
+            fetch('quants-videos.json')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loading-state').classList.add('hidden');
+                allVideoData = data; 
+                
+                Object.values(data).forEach(cat => flatCurriculum.push(...cat));
+                totalVideos = flatCurriculum.length;
+
+                renderInProgressSection();
+
+                const container = document.getElementById('accordion-container');
+                container.innerHTML = Object.keys(data).map((category, catIndex) => {
+                    const videos = data[category];
+                    const isOpen = catIndex === 0;
+                    
+                    return `
+                        <div class="border-b border-slate-200 last:border-0 module-accordion">
+                            <div class="bg-white hover:bg-slate-50 px-5 py-4 flex justify-between items-center cursor-pointer transition-colors accordion-header select-none sticky top-0 z-10" onclick="toggleAccordion(this)">
+                                <div>
+                                    <h3 class="font-extrabold text-slate-900 text-sm tracking-tight">${category}</h3>
+                                    <p class="text-[10px] text-slate-500 mt-0.5 font-bold uppercase tracking-wider">${videos.length} Lectures</p>
+                                </div>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-300 icon-arrow ${isOpen ? 'rotate-180' : ''}"></i>
+                            </div>
+                            <div class="accordion-body ${isOpen ? 'open' : ''} bg-white">
+                                <div class="flex flex-col bg-white">
+                                    ${videos.map((v, i) => createSidebarItem(v, i)).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                syncUI(); 
+                updateProgressBar();
+            })
+            .catch(err => {
+                document.getElementById('loading-state').innerHTML = `<div class="p-6 bg-red-50 text-red-600 rounded-xl border border-red-200 font-bold text-center">Error loading syllabus. Please check quants-videos.json.</div>`;
+            });
+        }
+
+        // === ACCORDION ===
+        window.toggleAccordion = function(header) {
+            const parent = header.parentElement;
+            const body = header.nextElementSibling;
+            const icon = header.querySelector('.icon-arrow');
+            
+            document.querySelectorAll('.module-accordion').forEach(acc => {
+                if (acc !== parent) {
+                    acc.querySelector('.accordion-body').classList.remove('open');
+                    acc.querySelector('.icon-arrow').classList.remove('rotate-180');
+                }
+            });
+
+            body.classList.toggle('open');
+            icon.classList.toggle('rotate-180');
+        };
+
+        // Sidebar logic
+        const toggleBtn = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            navLinks.classList.toggle('show');
+            overlay.classList.toggle('show');
+            document.body.style.overflow = navLinks.classList.contains('show') ? 'hidden' : 'auto';
+        }
+        toggleBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        initPage();
+    </script>
+</body>
+</html>
