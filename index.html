@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>BootLearn-MBA | Best Free MBA Prep</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,13 +17,48 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        /* Mobile Sidebar Logic handled via standard CSS to preserve exact JS functionality */
+        /* Mobile Sidebar Logic */
         .mobile-nav { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
         .mobile-nav.show { transform: translateX(0); }
         .nav-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
         .nav-overlay.show { opacity: 1; pointer-events: auto; }
 
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+        /* 🟢 PREMIUM MOBILE TABLES: Transforms tables into stacked cards on mobile */
+        @media (max-width: 768px) {
+            .responsive-table thead { display: none; }
+            .responsive-table tbody { display: flex; flex-direction: column; gap: 1rem; border: none; }
+            .responsive-table tr { 
+                display: flex; 
+                flex-direction: column; 
+                border: 1px solid #e2e8f0; 
+                border-radius: 1rem; 
+                background: #ffffff; 
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                padding: 0.5rem 0;
+            }
+            .responsive-table tr:hover { background-color: #ffffff; }
+            .responsive-table td { 
+                display: flex; 
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0.6rem 1.25rem; 
+                border-bottom: 1px solid #f1f5f9; 
+                text-align: left;
+                width: 100%;
+            }
+            .responsive-table td:last-child { border-bottom: none; }
+            .responsive-table td::before { 
+                content: attr(data-label); 
+                font-weight: 700; 
+                color: #94a3b8; 
+                font-size: 0.65rem; 
+                text-transform: uppercase; 
+                letter-spacing: 0.05em;
+                margin-bottom: 0.25rem;
+            }
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
@@ -116,8 +151,8 @@
                 <div class="w-1.5 h-7 bg-indigo-500 rounded-full"></div> Current CAT Exam Structure
             </h2>
             <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="overflow-x-auto pb-4">
-                    <table class="w-full text-left border-collapse min-w-[600px]">
+                <div class="overflow-hidden">
+                    <table class="w-full text-left border-collapse responsive-table">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold tracking-wider">
                                 <th class="p-4 rounded-tl-lg">Section</th>
@@ -129,24 +164,32 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
                             <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4">Verbal Ability & Reading Comprehension (VARC)</td>
-                                <td class="p-4">24</td><td class="p-4">40 min</td><td class="p-4">72</td>
-                                <td class="p-4 text-slate-500">16 RC + 8 VA (Para Jumbles, Summaries)</td>
+                                <td class="p-4" data-label="Section">Verbal Ability & Reading Comp. (VARC)</td>
+                                <td class="p-4" data-label="Questions">24</td>
+                                <td class="p-4" data-label="Time Limit">40 min</td>
+                                <td class="p-4" data-label="Max Marks">72</td>
+                                <td class="p-4 text-slate-500" data-label="Question Types">16 RC + 8 VA (Para Jumbles, Summaries)</td>
                             </tr>
                             <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4">Data Interpretation & Logical Reasoning (DILR)</td>
-                                <td class="p-4">20</td><td class="p-4">40 min</td><td class="p-4">60</td>
-                                <td class="p-4 text-slate-500">4 Sets of 5 Qs each</td>
+                                <td class="p-4" data-label="Section">Data Interpretation & Logical Reasoning (DILR)</td>
+                                <td class="p-4" data-label="Questions">20</td>
+                                <td class="p-4" data-label="Time Limit">40 min</td>
+                                <td class="p-4" data-label="Max Marks">60</td>
+                                <td class="p-4 text-slate-500" data-label="Question Types">4 Sets of 5 Qs each</td>
                             </tr>
                             <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4">Quantitative Ability (QA)</td>
-                                <td class="p-4">22</td><td class="p-4">40 min</td><td class="p-4">66</td>
-                                <td class="p-4 text-slate-500">Arithmetic, Algebra, Geometry, Numbers</td>
+                                <td class="p-4" data-label="Section">Quantitative Ability (QA)</td>
+                                <td class="p-4" data-label="Questions">22</td>
+                                <td class="p-4" data-label="Time Limit">40 min</td>
+                                <td class="p-4" data-label="Max Marks">66</td>
+                                <td class="p-4 text-slate-500" data-label="Question Types">Arithmetic, Algebra, Geometry, Numbers</td>
                             </tr>
                             <tr class="bg-slate-50 text-slate-900 font-bold">
-                                <td class="p-4">Total</td>
-                                <td class="p-4">66</td><td class="p-4">120 min</td><td class="p-4">198</td>
-                                <td class="p-4 text-slate-500 font-medium">MCQs + Non-MCQs (TITA)</td>
+                                <td class="p-4" data-label="Section">Total</td>
+                                <td class="p-4" data-label="Questions">66</td>
+                                <td class="p-4" data-label="Time Limit">120 min</td>
+                                <td class="p-4" data-label="Max Marks">198</td>
+                                <td class="p-4 text-slate-500 font-medium" data-label="Question Types">MCQs + Non-MCQs (TITA)</td>
                             </tr>
                         </tbody>
                     </table>
@@ -164,8 +207,8 @@
             </h2>
             <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <h3 class="text-base font-bold text-slate-800 mb-4">Score vs Percentile (Based on Tougher Recent Papers)</h3>
-                <div class="overflow-x-auto pb-4">
-                    <table class="w-full text-left border-collapse min-w-[600px]">
+                <div class="overflow-hidden">
+                    <table class="w-full text-left border-collapse responsive-table">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold tracking-wider">
                                 <th class="p-4">Percentile</th>
@@ -177,24 +220,39 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
                             <tr class="hover:bg-slate-50/50">
-                                <td class="p-4 font-bold text-indigo-600">99.9%</td><td class="p-4 font-bold text-slate-900">~ 102 Marks</td>
-                                <td class="p-4">42</td><td class="p-4">32</td><td class="p-4">30</td>
+                                <td class="p-4 font-bold text-indigo-600" data-label="Percentile">99.9%</td>
+                                <td class="p-4 font-bold text-slate-900" data-label="Estimated Total Score">~ 102 Marks</td>
+                                <td class="p-4" data-label="VARC target">42</td>
+                                <td class="p-4" data-label="DILR target">32</td>
+                                <td class="p-4" data-label="QA target">30</td>
                             </tr>
                             <tr class="hover:bg-slate-50/50">
-                                <td class="p-4 font-bold text-indigo-600">99.0%</td><td class="p-4 font-bold text-slate-900">~ 78 Marks</td>
-                                <td class="p-4">32</td><td class="p-4">24</td><td class="p-4">22</td>
+                                <td class="p-4 font-bold text-indigo-600" data-label="Percentile">99.0%</td>
+                                <td class="p-4 font-bold text-slate-900" data-label="Estimated Total Score">~ 78 Marks</td>
+                                <td class="p-4" data-label="VARC target">32</td>
+                                <td class="p-4" data-label="DILR target">24</td>
+                                <td class="p-4" data-label="QA target">22</td>
                             </tr>
                             <tr class="hover:bg-slate-50/50">
-                                <td class="p-4 font-bold text-slate-600">95.0%</td><td class="p-4 font-bold text-slate-900">~ 55 Marks</td>
-                                <td class="p-4">24</td><td class="p-4">16</td><td class="p-4">15</td>
+                                <td class="p-4 font-bold text-slate-600" data-label="Percentile">95.0%</td>
+                                <td class="p-4 font-bold text-slate-900" data-label="Estimated Total Score">~ 55 Marks</td>
+                                <td class="p-4" data-label="VARC target">24</td>
+                                <td class="p-4" data-label="DILR target">16</td>
+                                <td class="p-4" data-label="QA target">15</td>
                             </tr>
                             <tr class="hover:bg-slate-50/50">
-                                <td class="p-4 font-bold text-slate-600">90.0%</td><td class="p-4 font-bold text-slate-900">~ 45 Marks</td>
-                                <td class="p-4">20</td><td class="p-4">13</td><td class="p-4">12</td>
+                                <td class="p-4 font-bold text-slate-600" data-label="Percentile">90.0%</td>
+                                <td class="p-4 font-bold text-slate-900" data-label="Estimated Total Score">~ 45 Marks</td>
+                                <td class="p-4" data-label="VARC target">20</td>
+                                <td class="p-4" data-label="DILR target">13</td>
+                                <td class="p-4" data-label="QA target">12</td>
                             </tr>
                             <tr class="hover:bg-slate-50/50">
-                                <td class="p-4 font-bold text-slate-600">80.0%</td><td class="p-4 font-bold text-slate-900">~ 36 Marks</td>
-                                <td class="p-4">15</td><td class="p-4">10</td><td class="p-4">9</td>
+                                <td class="p-4 font-bold text-slate-600" data-label="Percentile">80.0%</td>
+                                <td class="p-4 font-bold text-slate-900" data-label="Estimated Total Score">~ 36 Marks</td>
+                                <td class="p-4" data-label="VARC target">15</td>
+                                <td class="p-4" data-label="DILR target">10</td>
+                                <td class="p-4" data-label="QA target">9</td>
                             </tr>
                         </tbody>
                     </table>
@@ -222,21 +280,21 @@
                     <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i data-lucide="award" class="w-4 h-4 text-amber-500"></i> TIER-1 (98-100 Percentile)
                     </h3>
-                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                        <table class="w-full text-left min-w-[500px]">
+                    <div class="overflow-hidden border border-slate-200 rounded-xl">
+                        <table class="w-full text-left responsive-table">
                             <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold">
                                 <tr><th class="p-3">Rank/Tier</th><th class="p-3">Institute</th><th class="p-3">Approx Cutoff</th><th class="p-3">Avg. Package</th></tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">BLACKI</td><td class="p-3 font-bold text-slate-900">IIM Ahmedabad</td><td class="p-3 text-indigo-600">99+</td><td class="p-3 text-emerald-600">₹34.5 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">BLACKI</td><td class="p-3 font-bold text-slate-900">IIM Bangalore</td><td class="p-3 text-indigo-600">99+</td><td class="p-3 text-emerald-600">₹35.9 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">BLACKI</td><td class="p-3 font-bold text-slate-900">IIM Calcutta</td><td class="p-3 text-indigo-600">99+</td><td class="p-3 text-emerald-600">₹35.1 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">BLACKI</td><td class="p-3 font-bold text-slate-900">IIM Lucknow</td><td class="p-3 text-indigo-600">98+</td><td class="p-3 text-emerald-600">₹30.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">BLACKI</td><td class="p-3 font-bold text-slate-900">IIM Kozhikode</td><td class="p-3 text-indigo-600">97+</td><td class="p-3 text-emerald-600">₹28.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">Top Tier</td><td class="p-3 font-bold text-slate-900">IIM Mumbai (Formerly NITIE)</td><td class="p-3 text-indigo-600">97+</td><td class="p-3 text-emerald-600">₹31.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">Top Tier</td><td class="p-3 font-bold text-slate-900">FMS Delhi</td><td class="p-3 text-indigo-600">99+</td><td class="p-3 text-emerald-600">₹34.1 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">Top Tier</td><td class="p-3 font-bold text-slate-900">SPJIMR Mumbai</td><td class="p-3 text-indigo-600">85+ (Profile Based)</td><td class="p-3 text-emerald-600">₹33.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">Top Tier</td><td class="p-3 font-bold text-slate-900">IIT Bombay (SJMSOM)</td><td class="p-3 text-indigo-600">98+</td><td class="p-3 text-emerald-600">₹28.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">BLACKI</td><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Ahmedabad</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">99+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹34.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">BLACKI</td><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Bangalore</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">99+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹35.9 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">BLACKI</td><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Calcutta</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">99+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹35.1 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">BLACKI</td><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Lucknow</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">98+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹30.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">BLACKI</td><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Kozhikode</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">97+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹28.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">Top Tier</td><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Mumbai (Formerly NITIE)</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">97+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹31.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">Top Tier</td><td class="p-3 font-bold text-slate-900" data-label="Institute">FMS Delhi</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">99+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹34.1 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">Top Tier</td><td class="p-3 font-bold text-slate-900" data-label="Institute">SPJIMR Mumbai</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">85+ (Profile)</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹33.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400" data-label="Rank/Tier">Top Tier</td><td class="p-3 font-bold text-slate-900" data-label="Institute">IIT Bombay (SJMSOM)</td><td class="p-3 text-indigo-600" data-label="Approx Cutoff">98+</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹28.0 LPA</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -246,24 +304,24 @@
                     <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i data-lucide="building" class="w-4 h-4 text-slate-500"></i> TIER-2 (90-97 Percentile)
                     </h3>
-                    <div class="overflow-x-auto border border-slate-200 rounded-xl max-h-[300px] custom-scrollbar">
-                        <table class="w-full text-left min-w-[500px]">
-                            <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold sticky top-0">
+                    <div class="overflow-x-hidden md:overflow-x-auto border border-slate-200 rounded-xl md:max-h-[300px] custom-scrollbar">
+                        <table class="w-full text-left responsive-table">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold md:sticky md:top-0">
                                 <tr><th class="p-3">Institute</th><th class="p-3">Approx. Percentile</th><th class="p-3">Avg. Package</th></tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">MDI Gurgaon</td><td class="p-3 text-slate-500">95-97</td><td class="p-3 text-emerald-600">₹26.5 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIM Shillong</td><td class="p-3 text-slate-500">96-98</td><td class="p-3 text-emerald-600">₹26.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIT Delhi (DMS)</td><td class="p-3 text-slate-500">97-98</td><td class="p-3 text-emerald-600">₹25.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIM Trichy</td><td class="p-3 text-slate-500">93-94</td><td class="p-3 text-emerald-600">₹19.5 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIM Raipur</td><td class="p-3 text-slate-500">93-94</td><td class="p-3 text-emerald-600">₹19.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIM Rohtak</td><td class="p-3 text-slate-500">95-96</td><td class="p-3 text-emerald-600">₹18.5 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IMI New Delhi</td><td class="p-3 text-slate-500">90-92</td><td class="p-3 text-emerald-600">₹16.5 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IMT Ghaziabad</td><td class="p-3 text-slate-500">90-92</td><td class="p-3 text-emerald-600">₹17.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">XIMB (via CAT/XAT)</td><td class="p-3 text-slate-500">90-93</td><td class="p-3 text-emerald-600">₹20.0 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">GLIM Chennai</td><td class="p-3 text-slate-500">85-90</td><td class="p-3 text-emerald-600">₹14.5 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">GIM Goa</td><td class="p-3 text-slate-500">85-88</td><td class="p-3 text-emerald-600">₹14.8 LPA</td></tr>
-                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">TAPMI Manipal</td><td class="p-3 text-slate-500">85-88</td><td class="p-3 text-emerald-600">₹14.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">MDI Gurgaon</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">95-97</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹26.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Shillong</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">96-98</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹26.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">IIT Delhi (DMS)</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">97-98</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹25.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Trichy</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">93-94</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹19.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Raipur</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">93-94</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹19.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">IIM Rohtak</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">95-96</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹18.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">IMI New Delhi</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">90-92</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹16.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">IMT Ghaziabad</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">90-92</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹17.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">XIMB (via CAT/XAT)</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">90-93</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹20.0 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">GLIM Chennai</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">85-90</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹14.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">GIM Goa</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">85-88</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹14.8 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900" data-label="Institute">TAPMI Manipal</td><td class="p-3 text-slate-500" data-label="Approx. Percentile">85-88</td><td class="p-3 text-emerald-600" data-label="Avg. Package">₹14.0 LPA</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -285,7 +343,7 @@
                     <div class="w-1.5 h-7 bg-purple-500 rounded-full"></div> Strategies for 99+ Percentile
                 </h2>
                 <div class="bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-xs font-bold border border-purple-100 shadow-sm flex items-center gap-2">
-                    <i data-lucide="key" class="w-4 h-4"></i> Strategy > Hard Work
+                    <i data-lucide="key" class="w-4 h-4"></i> Accuracy > Number of attempts
                 </div>
             </div>
 
@@ -358,17 +416,17 @@
                     <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shrink-0">3</div>
                     <div class="w-full">
                         <h4 class="font-bold text-slate-900 text-lg mb-3">Ideal Weekly Routine</h4>
-                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                            <table class="w-full text-left min-w-[400px]">
+                        <div class="overflow-hidden border border-slate-200 rounded-xl">
+                            <table class="w-full text-left responsive-table">
                                 <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold">
                                     <tr><th class="p-3">Day</th><th class="p-3">Focus Area</th><th class="p-3">Daily Habit (Must Do)</th></tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-sm text-slate-700 font-medium">
-                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Mon/Wed</td><td class="p-3">QA Concepts & Practice</td><td class="p-3 text-slate-500">Read 1 Aeon Essay</td></tr>
-                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Tue/Thu</td><td class="p-3">DILR Sets (Solve 4-5 sets)</td><td class="p-3 text-slate-500">30 mins Mental Math</td></tr>
-                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Fri</td><td class="p-3">VARC Sectional & Revision</td><td class="p-3 text-slate-500">Review Error Log</td></tr>
-                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-indigo-600">Sat</td><td class="p-3 text-indigo-600">Full Mock Test</td><td class="p-3 text-slate-500">Rest your brain</td></tr>
-                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-emerald-600">Sun</td><td class="p-3 text-emerald-600">Deep Mock Analysis</td><td class="p-3 text-slate-500">Plan next week</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold" data-label="Day">Mon/Wed</td><td class="p-3" data-label="Focus Area">QA Concepts & Practice</td><td class="p-3 text-slate-500" data-label="Daily Habit (Must Do)">Read 1 Aeon Essay</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold" data-label="Day">Tue/Thu</td><td class="p-3" data-label="Focus Area">DILR Sets (Solve 4-5 sets)</td><td class="p-3 text-slate-500" data-label="Daily Habit (Must Do)">30 mins Mental Math</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold" data-label="Day">Fri</td><td class="p-3" data-label="Focus Area">VARC Sectional & Revision</td><td class="p-3 text-slate-500" data-label="Daily Habit (Must Do)">Review Error Log</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-indigo-600" data-label="Day">Sat</td><td class="p-3 text-indigo-600" data-label="Focus Area">Full Mock Test</td><td class="p-3 text-slate-500" data-label="Daily Habit (Must Do)">Rest your brain</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-emerald-600" data-label="Day">Sun</td><td class="p-3 text-emerald-600" data-label="Focus Area">Deep Mock Analysis</td><td class="p-3 text-slate-500" data-label="Daily Habit (Must Do)">Plan next week</td></tr>
                                 </tbody>
                             </table>
                         </div>
