@@ -1,42 +1,163 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    lucide.createIcons();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sign Up | BootLearn-MBA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    // Initialize Supabase
-    const supabaseUrl = 'YOUR_SUPABASE_URL';
-    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
-    const supabase = supabase.createClient(https://ykapcsubuoupqunurglz.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8);
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900 py-10 px-4">
 
-    document.getElementById('signupForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="w-full max-w-md relative z-10">
         
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const errorDiv = document.getElementById('error-msg');
-        const errorText = document.getElementById('error-text');
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white text-lg font-extrabold shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">P</div>
+                <span class="text-xl font-extrabold text-slate-900 tracking-tight">BootLearn-MBA</span>
+            </a>
+        </div>
 
-        // 1. Sign up with Supabase Auth
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: { full_name: name }
+        <div class="glass-card rounded-3xl border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8">
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">Create an Account ✨</h2>
+            <p class="text-sm text-slate-500 font-medium mb-8">Start your free MBA preparation journey today.</p>
+
+            <form id="signupForm" class="space-y-5">
+                
+                <div id="error-msg" class="hidden bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-bold border border-red-100 flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i> 
+                    <span id="error-text">Email already exists</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Full Name</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                        <input type="text" id="name" required placeholder="John Doe" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50/50 focus:bg-white text-sm font-semibold text-slate-900 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="mail" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                        <input type="email" id="email" required placeholder="you@example.com" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50/50 focus:bg-white text-sm font-semibold text-slate-900 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Create Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="lock" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                        <input type="password" id="password" required minlength="6" placeholder="At least 6 characters" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50/50 focus:bg-white text-sm font-semibold text-slate-900 transition-all">
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/30 flex justify-center items-center gap-2 mt-4">
+                    <span>Create Account</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+
+            <div class="mt-8 text-center text-sm font-medium text-slate-500">
+                Already have an account? <a href="login.html" class="text-indigo-600 font-bold hover:text-indigo-800 transition-colors">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // 🟢 INITIALIZE SUPABASE
+        const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co'; // Replace with your actual URL
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8'; // Replace with your actual Anon Key
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Check if user is already logged in, redirect them if they are
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                window.location.href = 'learn.html';
             }
         });
 
-        if (error) {
-            errorDiv.classList.remove('hidden');
-            errorText.innerText = error.message;
-            return;
-        }
+        // Handle Signup Submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            const errorDiv = document.getElementById('error-msg');
+            const errorText = document.getElementById('error-text');
+            const submitBtn = document.getElementById('submitBtn');
 
-        // 2. Success! Supabase automatically logs them in. Redirect to dashboard.
-        window.location.href = 'learn.html';
-    });
+            // Set loading state on button
+            submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Setting up...`;
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75');
+            lucide.createIcons(); // render the spinner icon
 
-    // Check if already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) window.location.href = 'learn.html';
-    });
-</script>
+            // Call Supabase API
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: name
+                    }
+                }
+            });
+
+            if (error) {
+                // Restore button state
+                submitBtn.innerHTML = `<span>Create Account</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75');
+                lucide.createIcons();
+
+                // Show error message
+                errorDiv.classList.remove('hidden');
+                errorText.innerText = error.message;
+                return;
+            }
+
+            // Success! 
+            // Note: If you have "Confirm email" enabled in Supabase, data.session will be null here.
+            // If you disabled "Confirm email", data.session will exist and they are instantly logged in.
+            
+            if (data.session) {
+                window.location.href = 'learn.html';
+            } else {
+                // If email confirmation is required:
+                errorDiv.classList.remove('hidden', 'bg-red-50', 'text-red-600', 'border-red-100');
+                errorDiv.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+                errorDiv.innerHTML = `<i data-lucide="mail-check" class="w-4 h-4 shrink-0"></i> <span>Success! Please check your email to verify your account.</span>`;
+                lucide.createIcons();
+                
+                // Restore button
+                submitBtn.innerHTML = `<span>Create Account</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75');
+            }
+        });
+    </script>
+</body>
+</html>
