@@ -12,11 +12,12 @@ function renderNavbar() {
         ? 'bg-indigo-50 text-indigo-600' 
         : 'text-slate-600 hover:text-indigo-700 hover:bg-indigo-50'; 
 
-    // 🟢 USING PURE TAILWIND NOW - NO CUSTOM CSS REQUIRED!
     const navbarHTML = `
         <nav class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-6 py-4 flex justify-between items-center shadow-sm">
-            <a href="index.html" class="flex items-center shrink-0 group">
-                <span class="text-lg font-extrabold text-slate-900 tracking-tight hover:text-indigo-600 transition-colors">BootLearn-MBA</span>
+            
+            <a href="index.html" class="flex items-center shrink-0 group text-lg font-extrabold tracking-tight transition-colors">
+                <span class="text-slate-900 group-hover:text-indigo-600 transition-colors">BootLearn-</span>
+                <span class="text-orange-600 group-hover:text-indigo-600 transition-colors">MBA</span>
             </a>
             
             <button class="lg:hidden text-slate-600 hover:text-indigo-600 transition-colors p-2" id="menu-toggle" aria-label="Open Menu">
@@ -39,9 +40,11 @@ function renderNavbar() {
         <div id="overlay" class="lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"></div>
         
         <ul id="nav-links" class="lg:hidden fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[100] flex flex-col pt-20 border-r border-slate-200 overflow-y-auto -translate-x-full transition-transform duration-300 ease-in-out">
-            <div class="absolute top-4 left-6 flex items-center">
-                <span class="text-lg font-extrabold text-slate-900 tracking-tight">Menu</span>
+            <div class="absolute top-4 left-6 flex items-center text-lg font-extrabold tracking-tight">
+                <span class="text-slate-900">BootLearn-</span>
+                <span class="text-orange-600">MBA</span>
             </div>
+            
             <li><a href="index.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold transition-colors ${page === 'index.html' ? 'text-indigo-600 bg-slate-50' : 'text-slate-700 hover:bg-slate-50'}">Home</a></li>
             <li><a href="quant.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold transition-colors ${page === 'quant.html' ? 'text-indigo-600 bg-slate-50' : 'text-slate-700 hover:bg-slate-50'}">Quant</a></li>
             <li><a href="lrdi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold transition-colors ${page === 'lrdi.html' ? 'text-indigo-600 bg-slate-50' : 'text-slate-700 hover:bg-slate-50'}">LR-DI</a></li>
@@ -61,7 +64,7 @@ function renderNavbar() {
     checkAuthStatus();
 }
 
-// 3. MOBILE MENU LOGIC (Updated to use Tailwind)
+// 3. MOBILE MENU LOGIC
 function setupMobileMenu() {
     const toggleBtn = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
@@ -69,16 +72,13 @@ function setupMobileMenu() {
 
     function toggleMenu() {
         const isClosed = navLinks.classList.contains('-translate-x-full');
-        
         if (isClosed) {
-            // Open Menu
             navLinks.classList.remove('-translate-x-full');
             navLinks.classList.add('translate-x-0');
             overlay.classList.remove('opacity-0', 'pointer-events-none');
             overlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
         } else {
-            // Close Menu
             navLinks.classList.add('-translate-x-full');
             navLinks.classList.remove('translate-x-0');
             overlay.classList.add('opacity-0', 'pointer-events-none');
