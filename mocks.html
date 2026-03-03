@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BootLearn-MBA | Mock Tests & Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        html { scroll-behavior: smooth; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .mobile-nav { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+        .mobile-nav.show { transform: translateX(0); }
+        .nav-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        .nav-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    </style>
+
+    <script>
+        let hasToken = false;
+        for (let i = 0; i < localStorage.length; i++) {
+            if (localStorage.key(i).startsWith('sb-') && localStorage.key(i).endsWith('-auth-token')) {
+                hasToken = true; break;
+            }
+        }
+        if (!hasToken) window.location.href = 'login.html';
+    </script>
+</head>
+<body class="text-slate-800 antialiased selection:bg-rose-100 selection:text-rose-900 flex flex-col min-h-screen hidden" id="page-content">
+
+    <nav class="sticky top-0 z-50 glass-nav border-b border-slate-200/80 px-6 py-4 flex justify-between items-center shadow-sm">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm group-hover:scale-105 transition-transform">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">BootLearn-MBA</span>
+        </a>
+        
+        <button class="md:hidden text-slate-600 hover:text-rose-600 transition-colors" id="menu-toggle" aria-label="Open Menu">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <ul class="hidden md:flex items-center gap-1">
+            <li><a href="index.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50 transition-colors">Home</a></li>
+            <li><a href="quant.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50 transition-colors">Quant</a></li>
+            <li><a href="lrdi.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50 transition-colors">LR-DI</a></li>
+            <li><a href="verbal.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50 transition-colors">Verbal</a></li>
+            <li><a href="mocks.html" class="px-4 py-2 rounded-lg text-sm font-bold bg-rose-500 text-white shadow-sm transition-colors">Mock Tests</a></li>
+            <li>
+                <button onclick="handleLogout()" class="ml-4 px-4 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100 shadow-sm">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] nav-overlay" id="overlay"></div>
+    <ul class="fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[100] flex flex-col pt-20 mobile-nav border-r border-slate-200" id="nav-links">
+        <div class="absolute top-4 left-6 flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">Menu</span>
+        </div>
+        <li><a href="index.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Home</a></li>
+        <li><a href="quant.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Quant</a></li>
+        <li><a href="lrdi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">LR-DI</a></li>
+        <li><a href="verbal.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50">Verbal</a></li>
+        <li><a href="mocks.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold bg-rose-50 text-rose-600">Mock Tests</a></li>
+        <li><button onclick="handleLogout()" class="w-full text-left px-6 py-4 border-b border-slate-100 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Logout</button></li>
+    </ul>
+
+    <div class="max-w-5xl mx-auto px-6 pt-12 w-full">
+        <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-48 h-48 bg-rose-50 rounded-bl-full -z-10"></div>
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-100/50 border border-rose-200 text-rose-600 text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
+                <i data-lucide="target" class="w-3.5 h-3.5"></i> Exam Strategy
+            </div>
+
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+                Mock Tests: Your Key to Success
+            </h1>
+            <p class="text-slate-500 font-medium mb-2 max-w-2xl text-base">
+                Welcome, <span id="user-display-name" class="text-rose-600 font-bold">Student</span>! Simulating real exam conditions is the single most important factor in jumping from an 80 to a 99 percentile.
+            </p>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12 w-full">
+        
+        <section>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 mb-6 tracking-tight">
+                <div class="w-1.5 h-7 bg-rose-500 rounded-full"></div> Why Mock Tests Matter
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-rose-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="monitor" class="w-5 h-5 text-rose-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">Simulate the Interface</h4>
+                    <p class="text-sm text-slate-600">Experience the real CAT exam interface, calculator, and strict time pressure before the actual D-Day.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="bar-chart" class="w-5 h-5 text-amber-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">Identify Weaknesses</h4>
+                    <p class="text-sm text-slate-600">Analytics help you spot specific topics where you lose marks or spend too much time.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="clock" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">Time Management</h4>
+                    <p class="text-sm text-slate-600">Master the art of skipping hard questions. Learn to maximize attempts within the 40-minute sectional limit.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section>
+            <div class="bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200 p-6 md:p-8 rounded-2xl flex flex-col md:flex-row items-center gap-6 shadow-sm">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md shrink-0 border border-rose-100">
+                    <i data-lucide="lightbulb" class="w-8 h-8 text-rose-500 fill-rose-100"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">The 15-Mock Rule</h3>
+                    <p class="text-sm text-slate-700 font-medium">To achieve peak readiness, aim to complete at least <strong>15 to 20 full-length mocks</strong> before the actual exam. Spend 3 hours analyzing every 2-hour mock you take.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 mb-6 tracking-tight">
+                <div class="w-1.5 h-7 bg-indigo-500 rounded-full"></div> Top Recommended Platforms
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col h-full group">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                            <i data-lucide="target" class="w-6 h-6"></i>
+                        </div>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-2.5 py-1 rounded border border-slate-200">Free Tier Available</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Cracku CAT Mocks</h3>
+                    <p class="text-sm text-slate-500 mb-6 flex-1">Highly rated full-length mock tests featuring detailed video solutions, excellent analytics, and section-wise feedback to pinpoint improvement areas.</p>
+                    
+                    <a href="https://cracku.in/cat-mock-test" target="_blank" rel="noopener" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-indigo-600 text-white px-5 py-3.5 rounded-xl font-bold transition-colors shadow-md">
+                        Take a Test <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col h-full group">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                            <i data-lucide="file-text" class="w-6 h-6"></i>
+                        </div>
+                        <span class="bg-slate-100 text-slate-600 text-xs font-bold px-2.5 py-1 rounded border border-slate-200">Daily Free Tests</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">InsideIIM Daily Mocks</h3>
+                    <p class="text-sm text-slate-500 mb-6 flex-1">A fantastic resource for free daily sectional mocks and full-length tests for CAT, XAT, SNAP, and other major MBA entrance exams.</p>
+                    
+                    <a href="https://insideiim.com/free-daily-mba-mock-tests-cat-xat-other-mba-exams" target="_blank" rel="noopener" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-emerald-600 text-white px-5 py-3.5 rounded-xl font-bold transition-colors shadow-md">
+                        Take a Test <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-8 text-center mt-auto">
+        <p class="text-sm font-semibold text-slate-500">&copy; 2026 BootLearn-MBA by Prakior. Curated Free Learning.</p>
+    </footer>
+
+    <script>
+        // 🟢 INITIALIZE SUPABASE
+        const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // === AUTHENTICATION LOGIC ===
+        async function initPage() {
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            
+            // Kick out unauthenticated users
+            if (!session) {
+                window.location.href = 'login.html'; 
+                return;
+            }
+
+            // Set user name in header
+            const currentUserEmail = session.user.email;
+            const userName = session.user.user_metadata?.full_name || currentUserEmail.split('@')[0];
+            
+            document.getElementById('page-content').classList.remove('hidden');
+            document.getElementById('user-display-name').innerText = userName;
+
+            lucide.createIcons();
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        // === SIDEBAR LOGIC ===
+        const toggleBtn = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            navLinks.classList.toggle('show');
+            overlay.classList.toggle('show');
+            document.body.style.overflow = navLinks.classList.contains('show') ? 'hidden' : 'auto';
+        }
+
+        toggleBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // Boot up the page
+        initPage();
+    </script>
+</body>
+</html>
