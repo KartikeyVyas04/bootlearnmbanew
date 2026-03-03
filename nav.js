@@ -13,7 +13,9 @@ function renderNavbar() {
         : 'text-slate-600 hover:text-indigo-700 hover:bg-indigo-50'; 
 
     const navbarHTML = `
-        <nav class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="h-[72px] w-full"></div>
+
+        <nav class="fixed top-0 left-0 w-full z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-6 py-4 flex justify-between items-center shadow-sm">
             
             <a href="index.html" class="flex items-center shrink-0 group text-lg font-extrabold tracking-tight transition-colors">
                 <span class="text-slate-900 group-hover:text-indigo-600 transition-colors">BootLearn-</span>
@@ -37,9 +39,9 @@ function renderNavbar() {
             </ul>
         </nav>
 
-        <div id="overlay" class="lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"></div>
+        <div id="overlay" class="lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"></div>
         
-        <ul id="nav-links" class="lg:hidden fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[100] flex flex-col pt-20 border-r border-slate-200 overflow-y-auto -translate-x-full transition-transform duration-300 ease-in-out">
+        <ul id="nav-links" class="lg:hidden fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[70] flex flex-col pt-20 border-r border-slate-200 overflow-y-auto -translate-x-full transition-transform duration-300 ease-in-out">
             <div class="absolute top-4 left-6 flex items-center text-lg font-extrabold tracking-tight">
                 <span class="text-slate-900">BootLearn-</span>
                 <span class="text-orange-600">MBA</span>
