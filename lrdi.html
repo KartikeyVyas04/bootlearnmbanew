@@ -111,7 +111,7 @@
 
             <div>
                 <div class="flex items-center justify-between mb-5">
-                    <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2 tracking-tight">
+                    <h2 id="dynamic-section-title" class="text-xl font-extrabold text-slate-900 flex items-center gap-2 tracking-tight">
                         <div class="w-1.5 h-6 bg-amber-500 rounded-full"></div> Currently Learning
                     </h2>
                 </div>
@@ -121,12 +121,12 @@
                 <div id="in-progress-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 hidden">
                     </div>
 
-                <div id="empty-state" class="hidden bg-white rounded-2xl border border-slate-200 border-dashed p-12 text-center flex-col items-center justify-center">
-                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 mb-4 mx-auto shadow-sm">
-                        <i data-lucide="play-circle" class="w-8 h-8"></i>
+                <div id="completed-state" class="hidden bg-white rounded-2xl border border-slate-200 border-dashed p-12 text-center flex-col items-center justify-center">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 mb-4 mx-auto shadow-sm">
+                        <i data-lucide="award" class="w-8 h-8"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-2">No active lessons</h3>
-                    <p class="text-sm text-slate-500 max-w-sm mx-auto">Select a topic from the curriculum syllabus on the right to start watching.</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Curriculum Completed!</h3>
+                    <p class="text-sm text-slate-500 max-w-sm mx-auto">You have mastered all the topics in LR-DI. Phenomenal work!</p>
                 </div>
             </div>
             
@@ -169,8 +169,9 @@
         let totalVideos = 0;
         let completedVideos = [];
         let inProgressVideos = []; 
-        let trackingData = {}; // 🟢 NEW: Stores start/completion timestamps for Admin
+        let trackingData = {}; 
         let allVideoData = {}; 
+        let flatCurriculum = []; // 🟢 Used to easily find the next video
 
         // === AUTHENTICATION & INITIALIZATION ===
         async function initPage() {
@@ -217,7 +218,7 @@
                     module: 'lrdi', 
                     completed_videos: completedVideos,
                     in_progress_videos: inProgressVideos,
-                    tracking_data: trackingData // 🟢 Saving detailed timestamps
+                    tracking_data: trackingData
                 }, { onConflict: 'user_email, module' });
 
             updateProgressBar();
@@ -233,33 +234,27 @@
 
         // === ACTIONS ===
         
-        // 1. Triggered when clicking a video link
         window.markInProgress = function(videoId) {
-            // Initialize tracking object if new
             if (!trackingData[videoId]) trackingData[videoId] = {};
 
-            // If not already in progress, add it and log start time
             if (!inProgressVideos.includes(videoId)) {
                 inProgressVideos.push(videoId);
                 trackingData[videoId].startedAt = new Date().toISOString();
                 saveProgressToDB(); 
                 
-                // Instantly refresh UI
                 renderInProgressSection();
                 syncUI();
             } else {
-                // Just log another view
                 trackingData[videoId].lastViewedAt = new Date().toISOString();
                 saveProgressToDB();
             }
         }
 
-        // 2. Triggered when clicking checkmark/done button
         window.toggleVideoStatus = function(videoId) {
             const isDone = completedVideos.includes(videoId);
             const isInProg = inProgressVideos.includes(videoId);
             
-            // 🔒 LOGIC LOCK: Cannot complete if not started
+            // 🔒 LOGIC LOCK
             if (!isInProg && !isDone) {
                 showToast();
                 return;
@@ -268,11 +263,9 @@
             if (!trackingData[videoId]) trackingData[videoId] = {};
 
             if (isDone) {
-                // Undo
                 completedVideos = completedVideos.filter(id => id !== videoId);
                 trackingData[videoId].completedAt = null;
             } else {
-                // Mark Done
                 completedVideos.push(videoId);
                 trackingData[videoId].completedAt = new Date().toISOString();
             }
@@ -290,16 +283,13 @@
             document.getElementById('progress-count').innerText = `${completedVideos.length} of ${totalVideos} lectures completed`;
         }
 
-        // === SYNCHRONIZE ENTIRE UI ===
-        // This function dynamically updates all badges and buttons based on exact arrays, preventing desync.
         function syncUI() {
-            Object.values(allVideoData).flat().forEach(video => {
+            flatCurriculum.forEach(video => {
                 const vId = video.id;
                 const isDone = completedVideos.includes(vId);
                 const isInProg = inProgressVideos.includes(vId);
                 const isLocked = !isInProg && !isDone;
 
-                // Update Sidebar Check Buttons
                 const checkBtn = document.getElementById(`side-check-${vId}`);
                 if (checkBtn) {
                     if (isDone) {
@@ -314,7 +304,6 @@
                     }
                 }
 
-                // Update Sidebar Tags
                 const tagContainer = document.getElementById(`side-tag-${vId}`);
                 if (tagContainer) {
                     if (isDone) {
@@ -331,24 +320,34 @@
 
         // === UI RENDERERS ===
 
-        // Renders Main "Featured Card" for In-Progress section
-        function createMainCard(video) {
+        function createMainCard(video, isTarget = false) {
             const isPlaylist = video.id.startsWith('PL');
             const thumbnailUrl = isPlaylist 
                 ? 'https://images.unsplash.com/photo-1596496050827-8299e0220de1?q=80&w=600&auto=format&fit=crop'
                 : `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
             const url = isPlaylist ? `https://www.youtube.com/playlist?list=${video.id}` : `https://www.youtube.com/watch?v=${video.id}`;
             
+            let badgeHtml = `
+                <span class="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm border border-amber-400/50">
+                    <i data-lucide="clock" class="w-3 h-3"></i> Learning
+                </span>
+            `;
+            
+            // 🟢 Target styling
+            if (isTarget) {
+                badgeHtml = `
+                <span class="bg-indigo-600/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm border border-indigo-500/50">
+                    <i data-lucide="target" class="w-3 h-3"></i> Up Next
+                </span>
+                `;
+            }
+
             return `
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 transition-all duration-300 flex flex-col group relative overflow-hidden">
                     <a href="${url}" target="_blank" onclick="markInProgress('${video.id}')" class="relative w-full pt-[56.25%] rounded-xl overflow-hidden block">
-                        
                         <div class="absolute top-2 left-2 z-20">
-                            <span class="bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm border border-amber-400/50">
-                                <i data-lucide="clock" class="w-3 h-3"></i> Learning
-                            </span>
+                            ${badgeHtml}
                         </div>
-
                         <img src="${thumbnailUrl}" alt="${video.title}" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center">
                             <div class="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-indigo-600 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity scale-75 group-hover:scale-100 duration-300">
@@ -371,14 +370,12 @@
             `;
         }
 
-        // Renders the Sidebar Curriculum List
         function createSidebarItem(video, index) {
             const isPlaylist = video.id.startsWith('PL');
             const url = isPlaylist ? `https://www.youtube.com/playlist?list=${video.id}` : `https://www.youtube.com/watch?v=${video.id}`;
             
             return `
                 <div class="flex items-start gap-3 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group">
-                    
                     <button onclick="toggleVideoStatus('${video.id}')" id="side-check-${video.id}" title="Toggle Completed">
                         </button>
                     
@@ -397,29 +394,42 @@
             `;
         }
 
-        // Render In Progress Top Section
+        // 🟢 NEW LOGIC: Dynamic Section rendering (Target vs In-Progress)
         function renderInProgressSection() {
             const grid = document.getElementById('in-progress-grid');
-            const emptyState = document.getElementById('empty-state');
+            const compState = document.getElementById('completed-state');
+            const secTitle = document.getElementById('dynamic-section-title');
             
             let activeVideos = [];
-            Object.values(allVideoData).forEach(catVideos => {
-                catVideos.forEach(v => {
-                    if (inProgressVideos.includes(v.id) && !completedVideos.includes(v.id)) {
-                        activeVideos.push(v);
-                    }
-                });
+            flatCurriculum.forEach(v => {
+                if (inProgressVideos.includes(v.id) && !completedVideos.includes(v.id)) {
+                    activeVideos.push(v);
+                }
             });
 
             if (activeVideos.length > 0) {
+                // HAS IN-PROGRESS VIDEOS
+                secTitle.innerHTML = `<div class="w-1.5 h-6 bg-amber-500 rounded-full"></div> Currently Learning`;
                 grid.classList.remove('hidden');
-                emptyState.classList.add('hidden');
-                // Show latest clicked first
+                compState.classList.add('hidden');
                 grid.innerHTML = activeVideos.reverse().map(v => createMainCard(v)).join('');
             } else {
-                grid.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
+                // NO IN-PROGRESS VIDEOS -> FIND THE TARGET
+                if (completedVideos.length === flatCurriculum.length && flatCurriculum.length > 0) {
+                    // Entire course is complete!
+                    secTitle.innerHTML = `<div class="w-1.5 h-6 bg-emerald-500 rounded-full"></div> Journey Complete`;
+                    grid.classList.add('hidden');
+                    compState.classList.remove('hidden');
+                    compState.classList.add('flex');
+                } else if (flatCurriculum.length > 0) {
+                    // Find the very first uncompleted video
+                    let nextVideo = flatCurriculum.find(v => !completedVideos.includes(v.id));
+                    
+                    secTitle.innerHTML = `<div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div> Today's Target 🎯`;
+                    grid.classList.remove('hidden');
+                    compState.classList.add('hidden');
+                    grid.innerHTML = createMainCard(nextVideo, true);
+                }
             }
             lucide.createIcons();
         }
@@ -431,7 +441,10 @@
             .then(data => {
                 document.getElementById('loading-state').classList.add('hidden');
                 allVideoData = data; 
-                totalVideos = Object.values(data).reduce((acc, curr) => acc + curr.length, 0);
+                
+                // Build flat curriculum for easy math
+                Object.values(data).forEach(cat => flatCurriculum.push(...cat));
+                totalVideos = flatCurriculum.length;
 
                 renderInProgressSection();
 
@@ -459,7 +472,7 @@
                     `;
                 }).join('');
                 
-                syncUI(); // Inject locks, checks, and tags
+                syncUI(); 
                 updateProgressBar();
             })
             .catch(err => {
@@ -502,5 +515,3 @@
     </script>
 </body>
 </html>
-
-
