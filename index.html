@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BootLearn-MBA | Best Free MBA Prep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        html { scroll-behavior: smooth; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Mobile Sidebar Logic handled via standard CSS to preserve exact JS functionality */
+        .mobile-nav { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+        .mobile-nav.show { transform: translateX(0); }
+        .nav-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        .nav-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+    <header id="home" class="relative bg-slate-900 pt-20 pb-16 px-6 lg:pt-28 lg:pb-24 text-center overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-indigo-600/30 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-5xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-bold tracking-widest uppercase mb-6 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> Free Initiative by Prakior
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                BootLearn-<span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">MBA</span>
+            </h1>
+            <p class="mt-5 text-slate-300 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed">
+                India's first fully-free MBA exam prep platform — curated video lectures, mock tests, and strategies from top educators to help you crack CAT, XAT, SNAP and more with confidence.
+            </p>
+            
+            <a href="learn.html" class="inline-flex items-center gap-2 mt-8 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-1">
+                Start Learning Now <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </a>
+
+            <div class="flex flex-col md:flex-row justify-center gap-4 mt-16 max-w-4xl mx-auto">
+                <div class="flex-1 bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl text-left hover:bg-white/15 transition-colors">
+                    <div class="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="target" class="w-5 h-5 text-indigo-300"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">Focused Syllabus</h3>
+                    <p class="text-sm text-slate-300 font-medium">Structured learning paths for Quant, LR-DI, Verbal, Mocks, and GD/PI prep.</p>
+                </div>
+                <div class="flex-1 bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl text-left hover:bg-white/15 transition-colors">
+                    <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="book-open" class="w-5 h-5 text-emerald-300"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">Best Free Resources</h3>
+                    <p class="text-sm text-slate-300 font-medium">Handpicked YouTube lectures, notes, and practice sets — zero paywalls.</p>
+                </div>
+                <div class="flex-1 bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-2xl text-left hover:bg-white/15 transition-colors">
+                    <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="zap" class="w-5 h-5 text-amber-300"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-2">Smart Learning</h3>
+                    <p class="text-sm text-slate-300 font-medium">Track progress with visual bars, learn at your own pace, and never lose motivation.</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sticky top-0 z-50 glass-nav border-b border-slate-200/80 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">BootLearn-MBA</span>
+        </div>
+        
+        <button class="md:hidden text-slate-600 hover:text-indigo-600 transition-colors" id="menu-toggle" aria-label="Open Menu">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <ul class="hidden md:flex items-center gap-1">
+            <li><a href="#home" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Home</a></li>
+            <li><a href="quant.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Quant</a></li>
+            <li><a href="lrdi.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">LR-DI</a></li>
+            <li><a href="verbal.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Verbal</a></li>
+            <li><a href="mocks.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Mock Tests</a></li>
+            <li><a href="essays.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Essay/GD</a></li>
+            <li><a href="gk.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Current Affairs</a></li>
+        </ul>
+    </nav>
+
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] nav-overlay" id="overlay"></div>
+    <ul class="fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[100] flex flex-col pt-20 mobile-nav border-r border-slate-200" id="nav-links">
+        <div class="absolute top-4 left-6 flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">Menu</span>
+        </div>
+        <li><a href="#home" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Home</a></li>
+        <li><a href="quant.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Quant</a></li>
+        <li><a href="lrdi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">LR-DI</a></li>
+        <li><a href="verbal.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Verbal</a></li>
+        <li><a href="mocks.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Mock Tests</a></li>
+        <li><a href="essays.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Essay/GD</a></li>
+        <li><a href="gk.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Current Affairs</a></li>
+    </ul>
+
+    <main class="max-w-5xl mx-auto px-6 py-12 lg:py-16 space-y-12">
+        
+        <section>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 mb-6 tracking-tight">
+                <div class="w-1.5 h-7 bg-indigo-500 rounded-full"></div> CAT Exam Structure 2025
+            </h2>
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="overflow-x-auto pb-4">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold tracking-wider">
+                                <th class="p-4 rounded-tl-lg">Section</th>
+                                <th class="p-4">Questions</th>
+                                <th class="p-4">Time Limit</th>
+                                <th class="p-4">Max Marks</th>
+                                <th class="p-4 rounded-tr-lg">Question Types</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="p-4">Verbal Ability & Reading Comprehension (VARC)</td>
+                                <td class="p-4">24</td><td class="p-4">40 min</td><td class="p-4">72</td>
+                                <td class="p-4 text-slate-500">16 RC + 8 VA</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="p-4">Data Interpretation & Logical Reasoning (DILR)</td>
+                                <td class="p-4">22</td><td class="p-4">40 min</td><td class="p-4">66</td>
+                                <td class="p-4 text-slate-500">Sets of 3-5 Qs</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="p-4">Quantitative Ability (QA)</td>
+                                <td class="p-4">22</td><td class="p-4">40 min</td><td class="p-4">66</td>
+                                <td class="p-4 text-slate-500">Arithmetic + Algebra + Geometry</td>
+                            </tr>
+                            <tr class="bg-slate-50 text-slate-900 font-bold">
+                                <td class="p-4">Total</td>
+                                <td class="p-4">68</td><td class="p-4">120 min</td><td class="p-4">204</td>
+                                <td class="p-4 text-slate-500 font-medium">MCQs + TITA</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-600 flex gap-3">
+                    <i data-lucide="info" class="w-5 h-5 text-indigo-500 shrink-0"></i>
+                    <p><strong>Marking:</strong> +3 for correct, -1 for incorrect MCQ, 0 for TITA and unattempted. <br><span class="text-red-500 font-semibold">No section switching allowed.</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 mb-6 tracking-tight">
+                <div class="w-1.5 h-7 bg-amber-500 rounded-full"></div> CAT Marks vs Percentile (Analysis)
+            </h2>
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-base font-bold text-slate-800 mb-4">Score vs Percentile (CAT 2024 Estimated)</h3>
+                <div class="overflow-x-auto pb-4">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold tracking-wider">
+                                <th class="p-4">Percentile</th>
+                                <th class="p-4">Total Score</th>
+                                <th class="p-4">VARC</th>
+                                <th class="p-4">DILR</th>
+                                <th class="p-4">QA</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-indigo-600">99.9%</td><td class="p-4 font-bold text-slate-900">127</td>
+                                <td class="p-4">55</td><td class="p-4">50</td><td class="p-4">45</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-indigo-600">99.5%</td><td class="p-4 font-bold text-slate-900">104</td>
+                                <td class="p-4">44</td><td class="p-4">41</td><td class="p-4">37</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-indigo-600">99%</td><td class="p-4 font-bold text-slate-900">95</td>
+                                <td class="p-4">40</td><td class="p-4">38</td><td class="p-4">33</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-600">95%</td><td class="p-4 font-bold text-slate-900">70</td>
+                                <td class="p-4">30</td><td class="p-4">27</td><td class="p-4">22</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-600">90%</td><td class="p-4 font-bold text-slate-900">58</td>
+                                <td class="p-4">24</td><td class="p-4">23</td><td class="p-4">17</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-4 font-bold text-slate-600">80%</td><td class="p-4 font-bold text-slate-900">44</td>
+                                <td class="p-4">18</td><td class="p-4">17</td><td class="p-4">12</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-4 rounded-xl flex items-center gap-3 text-amber-900 shadow-sm">
+                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                        <i data-lucide="target" class="w-5 h-5 text-amber-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm">Target Strategy</p>
+                        <p class="text-xs mt-0.5">For 99+ Percentile: Target ~95-105 marks; For 95 Percentile: ~70-75 marks. Scores are normalized by slot difficulty for fairness.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 mb-6 tracking-tight">
+                <div class="w-1.5 h-7 bg-emerald-500 rounded-full"></div> Top MBA Colleges via CAT
+            </h2>
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-8">
+                
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="award" class="w-4 h-4 text-amber-500"></i> TIER-1 (99-100 Percentile)
+                    </h3>
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-left min-w-[500px]">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold">
+                                <tr><th class="p-3">Rank</th><th class="p-3">Institute</th><th class="p-3">CAT Cutoff</th><th class="p-3">Avg. Package</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">1</td><td class="p-3 font-bold text-slate-900">IIM Ahmedabad</td><td class="p-3 text-indigo-600">99+</td><td class="p-3 text-emerald-600">₹34.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">2</td><td class="p-3 font-bold text-slate-900">IIM Bangalore</td><td class="p-3 text-indigo-600">99+</td><td class="p-3 text-emerald-600">₹35.9 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">3</td><td class="p-3 font-bold text-slate-900">IIM Calcutta</td><td class="p-3 text-indigo-600">99+</td><td class="p-3 text-emerald-600">₹35.1 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">4</td><td class="p-3 font-bold text-slate-900">IIM Lucknow</td><td class="p-3 text-indigo-600">98+</td><td class="p-3 text-emerald-600">₹30 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">5</td><td class="p-3 font-bold text-slate-900">IIM Kozhikode</td><td class="p-3 text-indigo-600">97+</td><td class="p-3 text-emerald-600">₹26 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">6</td><td class="p-3 font-bold text-slate-900">IIM Indore</td><td class="p-3 text-indigo-600">97+</td><td class="p-3 text-emerald-600">₹28 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">7</td><td class="p-3 font-bold text-slate-900">FMS Delhi</td><td class="p-3 text-indigo-600">98+</td><td class="p-3 text-emerald-600">₹34 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">8</td><td class="p-3 font-bold text-slate-900">XLRI Jamshedpur</td><td class="p-3 text-indigo-600">95+</td><td class="p-3 text-emerald-600">₹30 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">9</td><td class="p-3 font-bold text-slate-900">NITIE Mumbai</td><td class="p-3 text-indigo-600">97+</td><td class="p-3 text-emerald-600">₹25 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 text-slate-400">10</td><td class="p-3 font-bold text-slate-900">SPJIMR Mumbai</td><td class="p-3 text-indigo-600">95+</td><td class="p-3 text-emerald-600">₹33 LPA</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="building" class="w-4 h-4 text-slate-500"></i> TIER-2 (90-97 Percentile)
+                    </h3>
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl max-h-[300px] custom-scrollbar">
+                        <table class="w-full text-left min-w-[500px]">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold sticky top-0">
+                                <tr><th class="p-3">Institute</th><th class="p-3">Approx. Percentile</th><th class="p-3">Avg. Package</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">MDI Gurgaon</td><td class="p-3 text-slate-500">95-97</td><td class="p-3 text-emerald-600">₹26 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIM Trichy</td><td class="p-3 text-slate-500">93-94</td><td class="p-3 text-emerald-600">₹20 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIM Raipur</td><td class="p-3 text-slate-500">93-94</td><td class="p-3 text-emerald-600">₹18.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIM Kashipur</td><td class="p-3 text-slate-500">92-94</td><td class="p-3 text-emerald-600">₹17.5 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IMI Delhi</td><td class="p-3 text-slate-500">90-92</td><td class="p-3 text-emerald-600">₹15 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IMT Ghaziabad</td><td class="p-3 text-slate-500">90-92</td><td class="p-3 text-emerald-600">₹17 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">IIFT Delhi/Kolkata</td><td class="p-3 text-slate-500">93-95</td><td class="p-3 text-emerald-600">₹25 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">KJ Somaiya Mumbai</td><td class="p-3 text-slate-500">85-87</td><td class="p-3 text-emerald-600">₹14 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">Great Lakes Chennai</td><td class="p-3 text-slate-500">85-90</td><td class="p-3 text-emerald-600">₹13 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">FORE Delhi</td><td class="p-3 text-slate-500">85-88</td><td class="p-3 text-emerald-600">₹14 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">BIM Trichy</td><td class="p-3 text-slate-500">85-90</td><td class="p-3 text-emerald-600">₹12 LPA</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-slate-900">NMIMS Mumbai</td><td class="p-3 text-slate-500">94-96</td><td class="p-3 text-emerald-600">₹23 LPA</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl">
+                    <h3 class="text-sm font-bold text-slate-800 mb-2">TIER-3 (70-85 Percentile Useful Colleges)</h3>
+                    <ul class="list-disc list-inside text-sm text-slate-600 space-y-1.5 marker:text-indigo-400">
+                        <li>BIMTECH Noida, XIME Bangalore, XISS Ranchi, IBS Hyderabad, Alliance University, KIIT School of Management, Galgotias University, Christ University, Amity University, etc.</li>
+                        <li>Many state universities and institutes accept scores in this range.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 tracking-tight">
+                    <div class="w-1.5 h-7 bg-purple-500 rounded-full"></div> Tips to Score 99+ Percentile
+                </h2>
+                <div class="bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-xs font-bold border border-purple-100 shadow-sm flex items-center gap-2">
+                    <i data-lucide="key" class="w-4 h-4"></i> Accuracy > Number of attempts
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="clock" class="w-5 h-5 text-indigo-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">1. Master Time Management</h4>
+                    <ul class="text-sm text-slate-600 space-y-1.5 list-disc list-inside marker:text-indigo-300">
+                        <li>Scan quickly for easiest questions first.</li>
+                        <li>Skip lengthy calculations—come back later.</li>
+                        <li>Take regular timed sectionals.</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="layers" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">2. Section Strategies</h4>
+                    <p class="text-sm text-slate-600 space-y-1">
+                        <strong>VARC:</strong> Focus on RCs; read Qs before passages.<br>
+                        <strong>DILR:</strong> Identify easier sets, attempt TITA first.<br>
+                        <strong>QA:</strong> Master Arithmetic, practice mental math.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="edit-3" class="w-5 h-5 text-amber-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">3. Practice Smart Mocks</h4>
+                    <ul class="text-sm text-slate-600 space-y-1.5 list-disc list-inside marker:text-amber-300">
+                        <li>Analyze all solutions after mocks.</li>
+                        <li>Log errors and create revision sheets.</li>
+                        <li>Simulate exam environment slots.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-red-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="crosshair" class="w-5 h-5 text-red-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">4. Maximize Accuracy</h4>
+                    <ul class="text-sm text-slate-600 space-y-1.5 list-disc list-inside marker:text-red-300">
+                        <li>Aim for >75% accuracy; avoid wild guesses.</li>
+                        <li>TITA has no negative marking, solve more.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-sky-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="book" class="w-5 h-5 text-sky-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">5. Build Fundamentals</h4>
+                    <ul class="text-sm text-slate-600 space-y-1.5 list-disc list-inside marker:text-sky-300">
+                        <li>Master basics before advanced topics.</li>
+                        <li>Read diverse opinions for VARC growth.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-300 transition-all hover:-translate-y-1 group">
+                    <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="check-square" class="w-5 h-5 text-purple-600"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-2">6. Attempt Selection</h4>
+                    <ul class="text-sm text-slate-600 space-y-1.5 list-disc list-inside marker:text-purple-300">
+                        <li>Choose confident questions.</li>
+                        <li>Don't attempt all, maximize marks selectively.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 mb-6 tracking-tight">
+                <div class="w-1.5 h-7 bg-sky-500 rounded-full"></div> How to Use BootLearn-MBA
+            </h2>
+            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-8">
+                
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shrink-0">1</div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-lg">Self-Diagnosis</h4>
+                        <p class="text-sm text-slate-600 mt-1">Take a diagnostic test: find strengths and weak spots. Set your percentile goal by desired colleges.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shrink-0">2</div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-lg">Build Your Plan</h4>
+                        <ul class="text-sm text-slate-600 mt-2 space-y-1 list-disc list-inside marker:text-slate-300">
+                            <li><strong>6+ months:</strong> focus on concepts & weekly practice.</li>
+                            <li><strong>3-5 months:</strong> daily practice + regular mocks.</li>
+                            <li><strong>1-2 months:</strong> intensive mocks + in-depth analysis & revision.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shrink-0">3</div>
+                    <div class="w-full">
+                        <h4 class="font-bold text-slate-900 text-lg mb-3">Weekly Routine Example</h4>
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table class="w-full text-left min-w-[400px]">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-bold">
+                                    <tr><th class="p-3">Day</th><th class="p-3">Morning</th><th class="p-3">Evening</th></tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm text-slate-700 font-medium">
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Mon</td><td class="p-3">QA Concepts</td><td class="p-3">QA Practice</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Tue</td><td class="p-3">VARC Reading</td><td class="p-3">VARC Practice</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Wed</td><td class="p-3">DILR Concepts</td><td class="p-3">DILR Practice</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Thu</td><td class="p-3">Mixed Practice</td><td class="p-3">Revision</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Fri</td><td class="p-3">Sectional Test</td><td class="p-3">Test Analysis</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold">Sat</td><td class="p-3">Full Mock</td><td class="p-3">Detailed Review</td></tr>
+                                    <tr class="hover:bg-slate-50"><td class="p-3 font-bold text-indigo-600">Sun</td><td class="p-3 text-indigo-600">Revision Day</td><td class="p-3 text-indigo-600">Light Reading</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3 mb-6 tracking-tight">
+                <div class="w-1.5 h-7 bg-orange-500 rounded-full"></div> Free Resources & Materials
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+                        <i data-lucide="library" class="w-5 h-5 text-indigo-600"></i>
+                        <h3 class="text-lg font-bold text-slate-900">Recommended Books</h3>
+                    </div>
+                    
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">Quantitative Ability:</h4>
+                    <ul class="text-sm text-slate-600 mb-4 list-disc list-inside marker:text-slate-300">
+                        <li>Arun Sharma: QA for CAT</li>
+                        <li>R.S. Aggarwal: Quantitative Aptitude</li>
+                        <li>Rajesh Balasubramanian: CAT QA</li>
+                    </ul>
+                    
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">VARC:</h4>
+                    <ul class="text-sm text-slate-600 mb-4 list-disc list-inside marker:text-slate-300">
+                        <li>Arun Sharma & Meenakshi U.: VA for CAT</li>
+                        <li>Norman Lewis: Word Power Made Easy</li>
+                        <li>RC99: Reading Comprehension</li>
+                    </ul>
+                    
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">LRDI:</h4>
+                    <ul class="text-sm text-slate-600 list-disc list-inside marker:text-slate-300">
+                        <li>Arun Sharma: DI for CAT</li>
+                        <li>Nishit K. Sinha: LR for CAT</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+                        <i data-lucide="monitor-play" class="w-5 h-5 text-emerald-600"></i>
+                        <h3 class="text-lg font-bold text-slate-900">Online Resources</h3>
+                    </div>
+
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">Free Mock Tests:</h4>
+                    <ul class="text-sm text-slate-600 mb-4 list-disc list-inside marker:text-slate-300">
+                        <li>IIM CAT Official Mocks</li>
+                        <li>Cracku, 2IIM, Unacademy Free Tests</li>
+                    </ul>
+                    
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">YouTube Channels:</h4>
+                    <ul class="text-sm text-slate-600 mb-4 list-disc list-inside marker:text-slate-300">
+                        <li>Rodha (Quant & LRDI)</li>
+                        <li>Unacademy CAT</li>
+                        <li>2IIM CAT Preparation</li>
+                        <li>Career Launcher</li>
+                        <li>Hitesh Bhasin (GD/PI)</li>
+                    </ul>
+                    
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">Helpful Apps:</h4>
+                    <ul class="text-sm text-slate-600 list-disc list-inside marker:text-slate-300">
+                        <li>BYJU's CAT Prep</li>
+                        <li>Unacademy & Gradeup</li>
+                        <li>Oliveboard</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-5 rounded-2xl flex items-center justify-center gap-3 text-indigo-900 shadow-sm text-center">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-indigo-600 shrink-0"></i>
+                <p class="font-semibold text-sm">Pro Tip: Start CAT prep at least 6 months prior. Consistency pays off!</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-8 text-center mt-12">
+        <p class="text-sm font-semibold text-slate-500">&copy; 2025 BootLearn-MBA by Prakior. Curated Free Learning for Everyone.</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Collapsible Sidebar Logic
+        const toggleBtn = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            navLinks.classList.toggle('show');
+            overlay.classList.toggle('show');
+            // Prevent body scroll when menu open
+            document.body.style.overflow = navLinks.classList.contains('show') ? 'hidden' : 'auto';
+        }
+
+        toggleBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        navLinks.querySelectorAll('a').forEach(link => { 
+            link.addEventListener('click', toggleMenu); 
+        });
+    </script>
+
+</body>
+</html>
