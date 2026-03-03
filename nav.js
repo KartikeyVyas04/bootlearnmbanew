@@ -1,4 +1,4 @@
-// 1. INITIALIZE SUPABASE
+// 1. INITIALIZE SUPABASE GLOBAL INSTANCE
 const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -89,34 +89,48 @@ function setupMobileMenu() {
         }
     }
 
-    toggleBtn.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', toggleMenu);
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleMenu);
+    if (overlay) overlay.addEventListener('click', toggleMenu);
     navLinks.querySelectorAll('a').forEach(link => { 
         link.addEventListener('click', toggleMenu); 
     });
 }
 
-// 4. AUTHENTICATION LOGIC
+// 4. AUTHENTICATION & ONBOARDING GATEKEEPER
 async function checkAuthStatus() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     
     const desktopAuthBtn = document.getElementById('desktop-auth-btn');
     const mobileAuthBtn = document.getElementById('mobile-auth-btn');
+    const path = window.location.pathname;
 
     if (session) {
+        // 🟢 STRATEGY 1: CHECK FOR INCOMPLETE GOOGLE PROFILE
+        const metadata = session.user.user_metadata;
+        const isProfileIncomplete = !metadata.phone || !metadata.category || !metadata.tenth_percent;
+
+        // Redirect to completion page if data is missing (and they aren't already there)
+        if (isProfileIncomplete && !path.includes('complete-profile.html')) {
+            window.location.href = 'complete-profile.html';
+            return;
+        }
+
         localStorage.removeItem('prakior_redirect_url'); 
         
-        desktopAuthBtn.innerHTML = `
+        const logoutBtnHTML = `
             <button onclick="handleLogout()" class="ml-2 px-4 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100">
                 <i data-lucide="log-out" class="w-4 h-4"></i> Logout
             </button>
         `;
+        
+        desktopAuthBtn.innerHTML = logoutBtnHTML;
         mobileAuthBtn.innerHTML = `
             <button onclick="handleLogout()" class="w-full text-left px-6 py-4 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors">
                 <i data-lucide="log-out" class="w-4 h-4"></i> Logout
             </button>
         `;
     } else {
+        // LOGGED OUT UI
         desktopAuthBtn.innerHTML = `
             <a href="login.html" class="ml-2 px-4 py-2 rounded-lg text-sm font-bold bg-slate-900 text-white hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
                 <i data-lucide="user" class="w-4 h-4"></i> Sign In
@@ -128,6 +142,7 @@ async function checkAuthStatus() {
             </a>
         `;
 
+        // PROTECT PAGES
         const protectedPages = ['quant.html', 'lrdi.html', 'verbal.html', 'mocks.html', 'updates.html', 'gdpi.html', 'learn.html'];
         document.querySelectorAll('a').forEach(link => {
             const href = link.getAttribute('href');
@@ -145,8 +160,8 @@ async function checkAuthStatus() {
 
 async function handleLogout() {
     await supabaseClient.auth.signOut();
-    window.location.reload(); 
+    window.location.href = 'login.html'; 
 }
 
-// 5. BOOT UP
+// 5. RUN ON LOAD
 renderNavbar();
