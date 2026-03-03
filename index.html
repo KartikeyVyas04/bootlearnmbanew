@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         html { scroll-behavior: smooth; }
@@ -92,6 +94,8 @@
             <li><a href="mocks.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Mock Tests</a></li>
             <li><a href="essays.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Essay/GD</a></li>
             <li><a href="gk.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Current Affairs</a></li>
+            
+            <li id="desktop-auth-btn"></li>
         </ul>
     </nav>
 
@@ -108,6 +112,8 @@
         <li><a href="mocks.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Mock Tests</a></li>
         <li><a href="essays.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Essay/GD</a></li>
         <li><a href="gk.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Current Affairs</a></li>
+        
+        <li id="mobile-auth-btn" class="w-full border-b border-slate-100"></li>
     </ul>
 
     <main class="max-w-5xl mx-auto px-6 py-12 lg:py-16 space-y-12 w-full">
@@ -463,8 +469,12 @@
     </footer>
 
     <script>
-        lucide.createIcons();
+        // 🟢 INITIALIZE SUPABASE
+        const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Sidebar Toggle Script
         const toggleBtn = document.getElementById('menu-toggle');
         const navLinks = document.getElementById('nav-links');
         const overlay = document.getElementById('overlay');
@@ -481,6 +491,52 @@
         navLinks.querySelectorAll('a').forEach(link => { 
             link.addEventListener('click', toggleMenu); 
         });
+
+        // 🟢 DYNAMIC AUTH STATUS LOGIC
+        async function checkAuthStatus() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            const desktopAuthBtn = document.getElementById('desktop-auth-btn');
+            const mobileAuthBtn = document.getElementById('mobile-auth-btn');
+
+            if (session) {
+                // User is logged in -> Show Logout Button
+                desktopAuthBtn.innerHTML = `
+                    <button onclick="handleLogout()" class="ml-4 px-4 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                    </button>
+                `;
+                mobileAuthBtn.innerHTML = `
+                    <button onclick="handleLogout()" class="w-full text-left px-6 py-4 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                    </button>
+                `;
+            } else {
+                // User is not logged in -> Show Sign In Button
+                desktopAuthBtn.innerHTML = `
+                    <a href="login.html" class="ml-4 px-4 py-2 rounded-lg text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2">
+                        <i data-lucide="user" class="w-4 h-4"></i> Sign In
+                    </a>
+                `;
+                mobileAuthBtn.innerHTML = `
+                    <a href="login.html" class="block px-6 py-4 text-sm font-bold text-indigo-600 hover:bg-indigo-50 flex items-center gap-2">
+                        <i data-lucide="user" class="w-4 h-4"></i> Sign In
+                    </a>
+                `;
+            }
+            
+            // Re-render icons for the newly injected HTML
+            lucide.createIcons();
+        }
+
+        // Handle Logout Action
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.reload(); // Refresh the page to show the login button again
+        }
+
+        // Run the auth check on page load
+        checkAuthStatus();
     </script>
 
 </body>
