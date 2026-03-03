@@ -2,104 +2,233 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Complete Profile | BootLearn-MBA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .form-step { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
+        .form-step.active { display: block; opacity: 1; animation: fadeIn 0.4s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input:focus, select:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important; outline: none; }
+        .error-msg { display: none; }
+        input:invalid.touched + .error-msg, select:invalid.touched + .error-msg { display: flex; }
+        input:invalid.touched, select:invalid.touched { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+    </style>
 </head>
-<body class="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-['Plus_Jakarta_Sans']">
+<body class="min-h-screen flex flex-col relative selection:bg-indigo-100 selection:text-indigo-900">
 
-    <div class="max-w-md w-full bg-white rounded-[2.5rem] shadow-xl border border-slate-100 p-8 md:p-10 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-0"></div>
-        
-        <div class="relative z-10">
-            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-2 text-center">Almost there! 🎓</h1>
-            <p class="text-sm text-slate-500 font-medium text-center mb-8 leading-relaxed">
-                We need a few more details to customize your MBA preparation and shortlisting.
-            </p>
+    <div class="flex-1 flex items-center justify-center py-6 md:py-10 px-4 md:px-8 relative overflow-hidden">
+        <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-            <form id="completeProfileForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Phone Number *</label>
-                    <input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="9876543210" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none text-sm font-semibold transition-all">
+        <div class="max-w-5xl w-full bg-white rounded-[2rem] shadow-2xl shadow-slate-200/50 flex flex-col md:flex-row overflow-hidden relative z-10 border border-slate-100">
+            
+            <div class="hidden md:flex w-full md:w-2/5 bg-slate-900 text-white p-10 md:p-12 flex flex-col relative overflow-hidden shrink-0">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-600/30 rounded-full blur-[80px] pointer-events-none -mr-20 -mt-20"></div>
+                
+                <div class="inline-flex items-center mb-12 relative z-10 text-xl font-extrabold tracking-tight">
+                    <span>BootLearn-</span><span class="text-orange-500">MBA</span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Category *</label>
-                        <select id="category" required class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-semibold cursor-pointer">
-                            <option value="General">General</option>
-                            <option value="OBC">OBC</option>
-                            <option value="SC">SC</option>
-                            <option value="ST">ST</option>
-                            <option value="EWS">EWS</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Gender *</label>
-                        <select id="gender" required class="w-full px-3 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-semibold cursor-pointer">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
+                <div class="relative z-10 flex-1 flex flex-col justify-center">
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 leading-tight">Final Step, <span id="welcome-name">Student</span>!</h1>
+                    <p class="text-slate-400 font-medium mb-10 leading-relaxed">Complete your academic profile to unlock personalized mock analysis and IIM shortlisting tools.</p>
+                    
+                    <ul class="space-y-5">
+                        <li class="flex items-start gap-3">
+                            <div class="mt-1 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0"><i data-lucide="shield-check" class="w-3 h-3"></i></div>
+                            <span class="text-sm font-medium text-slate-300">Verified Google Account</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="mt-1 w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 shrink-0"><i data-lucide="user-plus" class="w-3 h-3"></i></div>
+                            <span class="text-sm font-medium text-slate-300">Profile Completion Required</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="w-full md:w-3/5 p-8 md:p-12 bg-white relative">
+                
+                <div class="mb-8">
+                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Complete Your Profile</h2>
+                    <p class="text-sm text-slate-500 font-medium mt-1">Step <span id="step-counter">1</span> of 3</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">10th % *</label>
-                        <input type="number" id="tenth" step="0.1" required placeholder="85" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-semibold">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">12th % *</label>
-                        <input type="number" id="twelfth" step="0.1" required placeholder="82" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none text-sm font-semibold">
-                    </div>
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-8">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-orange-500 transition-all duration-500 ease-out" style="width: 33.33%;"></div>
                 </div>
 
-                <button type="submit" id="submitBtn" class="w-full bg-slate-900 hover:bg-indigo-600 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex justify-center items-center gap-2 mt-4">
-                    <span>Unlock My Dashboard</span> <i data-lucide="zap" class="w-4 h-4"></i>
-                </button>
-            </form>
+                <form id="completeProfileForm" novalidate>
+                    
+                    <div class="form-step active" id="step-1">
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Full Name *</label>
+                                <input type="text" id="name" required placeholder="John Doe" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Phone Number *</label>
+                                <input type="tel" id="phone" pattern="[0-9]{10}" required placeholder="9876543210" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900 transition-all">
+                                <div class="error-msg text-red-500 text-xs font-bold mt-1.5 items-center gap-1"><i data-lucide="x-circle" class="w-3 h-3"></i> 10-digit number required</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step-2">
+                        <div class="grid grid-cols-2 gap-4 mb-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Category *</label>
+                                <select id="category" required class="w-full px-3 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900 appearance-none cursor-pointer">
+                                    <option value="" disabled selected>Select...</option>
+                                    <option value="General">General</option>
+                                    <option value="EWS">EWS</option>
+                                    <option value="OBC">OBC</option>
+                                    <option value="SC">SC</option>
+                                    <option value="ST">ST</option>
+                                    <option value="PWD">PWD</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Gender *</label>
+                                <select id="gender" required class="w-full px-3 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900 appearance-none cursor-pointer">
+                                    <option value="" disabled selected>Select...</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">10th % *</label>
+                                <input type="number" id="tenth" min="0" max="100" step="0.01" required placeholder="85.5" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">12th % *</label>
+                                <input type="number" id="twelfth" min="0" max="100" step="0.01" required placeholder="82.0" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step-3">
+                        <div class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Degree *</label>
+                                    <input type="text" id="graduation" required placeholder="B.Tech" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Degree % *</label>
+                                    <input type="number" id="gradPercent" min="0" max="100" step="0.01" required placeholder="78.5" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Work Ex (Months)</label>
+                                <input type="number" id="workEx" min="0" max="600" placeholder="0 if fresher" class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold text-slate-900">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-between items-center gap-4">
+                        <button type="button" id="prevBtn" class="hidden px-6 py-3.5 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">
+                            Back
+                        </button>
+                        <button type="button" id="nextBtn" class="ml-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20">
+                            <span>Continue</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script>
-        lucide.createIcons();
-        
-        // 🟢 Initialize Supabase using same keys
         const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        document.getElementById('completeProfileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Saving...`;
+        lucide.createIcons();
+
+        let currentStep = 0;
+        const steps = document.querySelectorAll(".form-step");
+        const progress = document.getElementById("progress-bar");
+        const stepCounter = document.getElementById("step-counter");
+        const nextBtn = document.getElementById("nextBtn");
+        const prevBtn = document.getElementById("prevBtn");
+        const form = document.getElementById('completeProfileForm');
+
+        // Pre-fill name from Google Metadata
+        async function prefillData() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session?.user?.user_metadata?.full_name) {
+                document.getElementById('name').value = session.user.user_metadata.full_name;
+                document.getElementById('welcome-name').innerText = session.user.user_metadata.full_name.split(' ')[0];
+            }
+        }
+        prefillData();
+
+        function showStep(n) {
+            steps.forEach((step, idx) => step.classList.toggle("active", idx === n));
+            stepCounter.innerText = n + 1;
+            progress.style.width = ((n + 1) / steps.length) * 100 + "%";
+            prevBtn.classList.toggle("hidden", n === 0);
+            nextBtn.innerHTML = (n === steps.length - 1) ? `<span>Finish Setup</span> <i data-lucide="zap" class="w-4 h-4"></i>` : `<span>Continue</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
             lucide.createIcons();
+        }
 
-            const updates = {
-                phone: document.getElementById('phone').value,
-                category: document.getElementById('category').value,
-                gender: document.getElementById('gender').value,
-                tenth_percent: document.getElementById('tenth').value,
-                twelfth_percent: document.getElementById('twelfth').value,
-            };
-
-            const { error } = await supabaseClient.auth.updateUser({
-                data: updates
+        function validateStep(n) {
+            let valid = true;
+            steps[n].querySelectorAll("input, select").forEach(inp => {
+                if (!inp.checkValidity()) { inp.classList.add('touched'); valid = false; }
             });
+            return valid;
+        }
 
-            if (error) {
-                alert("Error updating profile: " + error.message);
-                btn.disabled = false;
-                btn.innerText = "Try Again";
+        prevBtn.addEventListener("click", () => { currentStep--; showStep(currentStep); });
+
+        nextBtn.addEventListener("click", async () => {
+            if (!validateStep(currentStep)) return;
+            if (currentStep < steps.length - 1) {
+                currentStep++; showStep(currentStep);
             } else {
-                window.location.href = 'learn.html';
+                nextBtn.disabled = true;
+                nextBtn.innerHTML = `<span>Saving Profile...</span> <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>`;
+                
+                const { error } = await supabaseClient.auth.updateUser({
+                    data: {
+                        full_name: document.getElementById('name').value.trim(),
+                        phone: document.getElementById('phone').value.trim(),
+                        category: document.getElementById('category').value,
+                        gender: document.getElementById('gender').value,
+                        tenth_percent: document.getElementById('tenth').value,
+                        twelfth_percent: document.getElementById('twelfth').value,
+                        graduation_degree: document.getElementById('graduation').value.trim(),
+                        graduation_percent: document.getElementById('gradPercent').value,
+                        work_experience_months: document.getElementById('workEx').value || 0
+                    }
+                });
+
+                if (error) {
+                    alert("Error saving details: " + error.message);
+                    nextBtn.disabled = false;
+                    nextBtn.innerHTML = `<span>Finish Setup</span> <i data-lucide="zap" class="w-4 h-4"></i>`;
+                    lucide.createIcons();
+                } else {
+                    window.location.href = 'learn.html';
+                }
             }
         });
+
+        showStep(currentStep);
     </script>
 </body>
 </html>
