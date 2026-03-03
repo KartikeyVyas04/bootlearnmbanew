@@ -30,7 +30,6 @@
     </style>
 
     <script>
-        // Check if a Supabase token exists in local storage. Kick out immediately if not.
         let hasToken = false;
         for (let i = 0; i < localStorage.length; i++) {
             if (localStorage.key(i).startsWith('sb-') && localStorage.key(i).endsWith('-auth-token')) {
@@ -110,7 +109,7 @@
     </footer>
 
     <script>
-        // 🟢 INITIALIZE SUPABASE (FIXED NAMING COLLISION)
+        // 🟢 INITIALIZE SUPABASE
         const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -118,13 +117,14 @@
         let currentUserEmail = null;
         let totalVideos = 0;
         let completedVideos = [];
+        let inProgressVideos = []; // 🟢 NEW: Array for in-progress tracking
 
         // === AUTHENTICATION & INITIALIZATION ===
         async function initPage() {
             const { data: { session }, error } = await supabaseClient.auth.getSession();
             
             if (!session) {
-                window.location.href = 'login.html'; // Final auth check
+                window.location.href = 'login.html'; 
                 return;
             }
 
@@ -135,8 +135,8 @@
             document.getElementById('user-display-name').innerText = userName;
 
             lucide.createIcons();
-            await loadProgressFromDB(); // Pull data from Supabase
-            loadVideos(); // Render page
+            await loadProgressFromDB(); 
+            loadVideos(); 
         }
 
         async function handleLogout() {
@@ -148,13 +148,14 @@
         async function loadProgressFromDB() {
             const { data, error } = await supabaseClient
                 .from('user_progress')
-                .select('completed_videos')
+                .select('completed_videos, in_progress_videos')
                 .eq('user_email', currentUserEmail)
                 .eq('module', 'lrdi')
                 .maybeSingle();
 
-            if (data && data.completed_videos) {
-                completedVideos = data.completed_videos;
+            if (data) {
+                if (data.completed_videos) completedVideos = data.completed_videos;
+                if (data.in_progress_videos) inProgressVideos = data.in_progress_videos;
             }
         }
 
@@ -164,29 +165,67 @@
                 .upsert({ 
                     user_email: currentUserEmail, 
                     module: 'lrdi', 
-                    completed_videos: completedVideos 
-                }, { onConflict: 'user_email, module' }); // ensure the DB overwrites instead of duplicating
+                    completed_videos: completedVideos,
+                    in_progress_videos: inProgressVideos
+                }, { onConflict: 'user_email, module' });
 
             updateProgressBar();
         }
 
+        // 🟢 NEW: Triggered automatically when they click the video thumbnail
+        window.markInProgress = function(videoId) {
+            // Don't mark as in progress if it's already done or already in progress
+            if (completedVideos.includes(videoId) || inProgressVideos.includes(videoId)) return;
+
+            inProgressVideos.push(videoId);
+            saveProgressToDB(); // Sync instantly to Supabase
+
+            // Update UI immediately (Inject Amber Badge)
+            const badgeContainer = document.getElementById(`badge-${videoId}`);
+            if (badgeContainer) {
+                badgeContainer.innerHTML = `
+                    <div class="bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-amber-400">
+                        <i data-lucide="clock" class="w-3 h-3"></i> In Progress
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
         window.toggleVideoStatus = function(videoId, btnElement) {
             const isDone = completedVideos.includes(videoId);
+            const badgeContainer = document.getElementById(`badge-${videoId}`);
             
             if (isDone) {
                 // Remove from completed
                 completedVideos = completedVideos.filter(id => id !== videoId);
                 btnElement.innerHTML = `<i data-lucide="circle" class="w-4 h-4"></i> Mark as Done`;
                 btnElement.className = "mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors";
+                
+                // If it was previously in progress, show the amber badge again. Otherwise, hide badge.
+                if (inProgressVideos.includes(videoId)) {
+                    badgeContainer.innerHTML = `
+                        <div class="bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-amber-400">
+                            <i data-lucide="clock" class="w-3 h-3"></i> In Progress
+                        </div>`;
+                } else {
+                    badgeContainer.innerHTML = '';
+                }
             } else {
                 // Add to completed
                 completedVideos.push(videoId);
                 btnElement.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4"></i> Completed`;
                 btnElement.className = "mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-sm shadow-emerald-200 transition-colors";
+                
+                // Update to Green Badge
+                badgeContainer.innerHTML = `
+                    <div class="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-emerald-400">
+                        <i data-lucide="check-circle-2" class="w-3 h-3"></i> Completed
+                    </div>`;
             }
             
             lucide.createIcons();
-            saveProgressToDB(); // Sync instantly to Supabase
+            saveProgressToDB(); 
         }
 
         function updateProgressBar() {
@@ -208,6 +247,8 @@
             const url = isPlaylist ? `https://www.youtube.com/playlist?list=${video.id}` : `https://www.youtube.com/watch?v=${video.id}`;
             
             const isDone = completedVideos.includes(video.id);
+            const isInProgress = inProgressVideos.includes(video.id);
+
             const btnClass = isDone 
                 ? "bg-emerald-500 text-white shadow-sm shadow-emerald-200" 
                 : "border border-slate-200 text-slate-600 hover:bg-slate-50";
@@ -215,9 +256,21 @@
                 ? `<i data-lucide="check-circle-2" class="w-4 h-4"></i> Completed` 
                 : `<i data-lucide="circle" class="w-4 h-4"></i> Mark as Done`;
 
+            // Generate initial badge HTML based on state
+            let badgeHtml = '';
+            if (isDone) {
+                badgeHtml = `<div class="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-emerald-400"><i data-lucide="check-circle-2" class="w-3 h-3"></i> Completed</div>`;
+            } else if (isInProgress) {
+                badgeHtml = `<div class="bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-amber-400"><i data-lucide="clock" class="w-3 h-3"></i> In Progress</div>`;
+            }
+
             return `
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col group">
-                    <a href="${url}" target="_blank" class="relative w-full pt-[56.25%] rounded-xl overflow-hidden shadow-sm block">
+                    <a href="${url}" target="_blank" onclick="markInProgress('${video.id}')" class="relative w-full pt-[56.25%] rounded-xl overflow-hidden shadow-sm block">
+                        <div id="badge-${video.id}" class="absolute top-2 left-2 z-20 transition-all">
+                            ${badgeHtml}
+                        </div>
+
                         <img src="${thumbnailUrl}" alt="${video.title}" class="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center">
                             <div class="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-amber-500 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity scale-75 group-hover:scale-100 duration-300">
