@@ -168,10 +168,8 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Initialize Lucide Icons
         lucide.createIcons();
 
-        // Sidebar Toggle Script
         const toggleBtn = document.getElementById('menu-toggle');
         const navLinks = document.getElementById('nav-links');
         const overlay = document.getElementById('overlay');
@@ -184,13 +182,9 @@
 
         toggleBtn.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
+        navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', toggleMenu); });
 
-        // Close menu when a link is clicked
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', toggleMenu);
-        });
-
-        // 🟢 DYNAMIC AUTH STATUS LOGIC
+        // 🟢 DYNAMIC AUTH STATUS & SMART REDIRECT LOGIC
         async function checkAuthStatus() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             
@@ -198,7 +192,9 @@
             const mobileAuthBtn = document.getElementById('mobile-auth-btn');
 
             if (session) {
-                // User is logged in -> Show Logout Button
+                // User IS logged in -> Show Logout Button
+                localStorage.removeItem('prakior_redirect_url'); // Clear memory just in case
+
                 desktopAuthBtn.innerHTML = `
                     <button onclick="handleLogout()" class="ml-4 px-4 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100">
                         <i data-lucide="log-out" class="w-4 h-4"></i> Logout
@@ -210,7 +206,7 @@
                     </button>
                 `;
             } else {
-                // User is not logged in -> Show Sign In Button
+                // User IS NOT logged in -> Show Sign In Button
                 desktopAuthBtn.innerHTML = `
                     <a href="login.html" class="ml-4 px-4 py-2 rounded-lg text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2">
                         <i data-lucide="user" class="w-4 h-4"></i> Sign In
@@ -221,19 +217,30 @@
                         <i data-lucide="user" class="w-4 h-4"></i> Sign In
                     </a>
                 `;
+
+                // 🟢 SMART REDIRECT INTERCEPTOR
+                // If they are logged out, intercept clicks on protected pages
+                const protectedPages = ['quant.html', 'lrdi.html', 'verbal.html', 'mocks.html', 'essays.html', 'gk.html'];
+                
+                document.querySelectorAll('a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && protectedPages.includes(href)) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault(); // Stop normal navigation
+                            localStorage.setItem('prakior_redirect_url', href); // Save destination
+                            window.location.href = 'login.html'; // Send to login
+                        });
+                    }
+                });
             }
-            
-            // Re-render icons for the newly injected HTML
             lucide.createIcons();
         }
 
-        // Handle Logout Action
         async function handleLogout() {
             await supabaseClient.auth.signOut();
-            window.location.reload(); // Refresh the page to update header
+            window.location.reload(); 
         }
 
-        // Run the auth check on page load
         checkAuthStatus();
     </script>
 </body>
