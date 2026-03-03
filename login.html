@@ -77,16 +77,18 @@
     <script>
         lucide.createIcons();
 
-        // 🟢 INITIALIZE SUPABASE (FIXED NAMING COLLISION)
+        // 🟢 INITIALIZE SUPABASE
         const supabaseUrl = 'https://ykapcsubuoupqunurglz.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
-        
-        // Use supabaseClient instead of supabase to avoid CDN conflict
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Check if already logged in
+        // Check if already logged in (using Memory Redirect)
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
-            if (session) window.location.href = 'learn.html';
+            if (session) {
+                const redirectUrl = localStorage.getItem('prakior_redirect_url') || 'learn.html';
+                localStorage.removeItem('prakior_redirect_url');
+                window.location.href = redirectUrl;
+            }
         });
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -113,7 +115,9 @@
             if (error) {
                 // Show error
                 errorDiv.classList.remove('hidden');
-                errorText.innerText = "Invalid email or password.";
+                
+                // 🟢 DYNAMIC ERROR MESSAGE (Will show "Email not confirmed" if relevant)
+                errorText.innerText = error.message; 
                 
                 // Reset button
                 submitBtn.innerHTML = `<span>Sign In</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
@@ -123,11 +127,10 @@
                 return;
             }
 
-            // Success
-            // Success
-const redirectUrl = localStorage.getItem('prakior_redirect_url') || 'learn.html';
-localStorage.removeItem('prakior_redirect_url'); // Clear it after reading
-window.location.href = redirectUrl;
+            // 🟢 SUCCESS WITH SMART REDIRECT
+            const redirectUrl = localStorage.getItem('prakior_redirect_url') || 'learn.html';
+            localStorage.removeItem('prakior_redirect_url');
+            window.location.href = redirectUrl;
         });
     </script>
 </body>
