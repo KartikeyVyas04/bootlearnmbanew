@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BootLearn-MBA | Start Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        html { scroll-behavior: smooth; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Mobile Sidebar Logic */
+        .mobile-nav { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+        .mobile-nav.show { transform: translateX(0); }
+        .nav-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; }
+        .nav-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900 flex flex-col min-h-screen">
+
+    <nav class="sticky top-0 z-50 glass-nav border-b border-slate-200/80 px-6 py-4 flex justify-between items-center shadow-sm">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm group-hover:scale-105 transition-transform">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">BootLearn-MBA</span>
+        </a>
+        
+        <button class="md:hidden text-slate-600 hover:text-indigo-600 transition-colors" id="menu-toggle" aria-label="Open Menu">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <ul class="hidden md:flex items-center gap-1">
+            <li><a href="index.html#home" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Home</a></li>
+            <li><a href="quant.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Quant</a></li>
+            <li><a href="lrdi.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">LR-DI</a></li>
+            <li><a href="verbal.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Verbal</a></li>
+            <li><a href="mocks.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Mock Tests</a></li>
+            <li><a href="essays.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Essay/GD</a></li>
+            <li><a href="gk.html" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 transition-colors">Current Affairs</a></li>
+        </ul>
+    </nav>
+
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] nav-overlay" id="overlay"></div>
+    <ul class="fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[100] flex flex-col pt-20 mobile-nav border-r border-slate-200" id="nav-links">
+        <div class="absolute top-4 left-6 flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
+            <span class="text-lg font-extrabold text-slate-900 tracking-tight">Menu</span>
+        </div>
+        <li><a href="index.html#home" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Home</a></li>
+        <li><a href="quant.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Quant</a></li>
+        <li><a href="lrdi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">LR-DI</a></li>
+        <li><a href="verbal.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Verbal</a></li>
+        <li><a href="mocks.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Mock Tests</a></li>
+        <li><a href="essays.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Essay/GD</a></li>
+        <li><a href="gk.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600">Current Affairs</a></li>
+    </ul>
+
+    <div class="text-center max-w-3xl mx-auto px-6 pt-16 pb-10">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-5">
+            Start Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">MBA Prep</span> Journey
+        </h1>
+        <p class="text-lg text-slate-500 font-medium leading-relaxed">
+            Select a section below to dive straight into curated free resources, designed to help you ace your MBA entrance exams with absolute confidence.
+        </p>
+    </div>
+
+    <main class="flex-1 max-w-6xl mx-auto px-6 pb-20 w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all duration-300 hover:-translate-y-1 group flex flex-col relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 group-hover:bg-indigo-100 transition-colors"></div>
+                <div class="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="calculator" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 tracking-tight">Quantitative Aptitude</h3>
+                <p class="text-sm text-slate-500 font-medium mb-8 leading-relaxed">Master Arithmetic, Algebra, Geometry, and Number Systems with handpicked expert lessons.</p>
+                <a href="quant.html" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-indigo-600 text-slate-700 hover:text-white px-5 py-3.5 rounded-xl font-bold transition-all border border-slate-200 hover:border-transparent shadow-sm hover:shadow-md">
+                    Start Quant <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-amber-300 transition-all duration-300 hover:-translate-y-1 group flex flex-col relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-10 group-hover:bg-amber-100 transition-colors"></div>
+                <div class="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="bar-chart-2" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 tracking-tight">Logical Reasoning & DI</h3>
+                <p class="text-sm text-slate-500 font-medium mb-8 leading-relaxed">Tackle complex logic puzzles, arrangement sets, Data Interpretation & core reasoning strategies.</p>
+                <a href="lrdi.html" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-amber-500 text-slate-700 hover:text-white px-5 py-3.5 rounded-xl font-bold transition-all border border-slate-200 hover:border-transparent shadow-sm hover:shadow-md">
+                    Start LR-DI <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all duration-300 hover:-translate-y-1 group flex flex-col relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-10 group-hover:bg-emerald-100 transition-colors"></div>
+                <div class="w-14 h-14 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="book-open" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 tracking-tight">Verbal Ability (VARC)</h3>
+                <p class="text-sm text-slate-500 font-medium mb-8 leading-relaxed">Elevate your reading comprehension, advanced grammar, vocabulary & para jumble solving skills.</p>
+                <a href="verbal.html" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-emerald-600 text-slate-700 hover:text-white px-5 py-3.5 rounded-xl font-bold transition-all border border-slate-200 hover:border-transparent shadow-sm hover:shadow-md">
+                    Start Verbal <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-red-300 transition-all duration-300 hover:-translate-y-1 group flex flex-col relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-red-50 rounded-bl-full -z-10 group-hover:bg-red-100 transition-colors"></div>
+                <div class="w-14 h-14 bg-red-50 rounded-xl flex items-center justify-center text-red-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="edit-3" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 tracking-tight">Mock Tests & Analysis</h3>
+                <p class="text-sm text-slate-500 font-medium mb-8 leading-relaxed">Simulate full-length CAT & XAT exams, learn attempt strategies, and deeply analyze performance.</p>
+                <a href="mocks.html" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-red-600 text-slate-700 hover:text-white px-5 py-3.5 rounded-xl font-bold transition-all border border-slate-200 hover:border-transparent shadow-sm hover:shadow-md">
+                    Start Mocks <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-sky-300 transition-all duration-300 hover:-translate-y-1 group flex flex-col relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-sky-50 rounded-bl-full -z-10 group-hover:bg-sky-100 transition-colors"></div>
+                <div class="w-14 h-14 bg-sky-50 rounded-xl flex items-center justify-center text-sky-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="message-square" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 tracking-tight">Essay / GD / PI</h3>
+                <p class="text-sm text-slate-500 font-medium mb-8 leading-relaxed">Prepare for the crucial stage 2. Master Personal Interviews, Group Discussions, and WAT.</p>
+                <a href="essays.html" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-sky-600 text-slate-700 hover:text-white px-5 py-3.5 rounded-xl font-bold transition-all border border-slate-200 hover:border-transparent shadow-sm hover:shadow-md">
+                    Start Essay/GD <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 group flex flex-col relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-purple-50 rounded-bl-full -z-10 group-hover:bg-purple-100 transition-colors"></div>
+                <div class="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="globe" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 tracking-tight">Current Affairs (GK)</h3>
+                <p class="text-sm text-slate-500 font-medium mb-8 leading-relaxed">Stay updated on global events, business, economy, and static GK for exams like XAT and SNAP.</p>
+                <a href="gk.html" class="mt-auto w-full inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-purple-600 text-slate-700 hover:text-white px-5 py-3.5 rounded-xl font-bold transition-all border border-slate-200 hover:border-transparent shadow-sm hover:shadow-md">
+                    Start GK <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-8 text-center mt-auto">
+        <p class="text-sm font-semibold text-slate-500">&copy; 2026 BootLearn-MBA by Prakior. Curated Free Learning for Everyone.</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Sidebar Toggle Script
+        const toggleBtn = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            navLinks.classList.toggle('show');
+            overlay.classList.toggle('show');
+            document.body.style.overflow = navLinks.classList.contains('show') ? 'hidden' : 'auto';
+        }
+
+        toggleBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Close menu when a link is clicked
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+    </script>
+</body>
+</html>
