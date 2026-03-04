@@ -34,6 +34,13 @@ function renderNavbar() {
                 <li><a href="mocks.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('mocks.html')}">Mock Tests</a></li>
                 
                 <li>
+                    <a href="toolkit.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2 ${activeClass('toolkit.html')}">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i>
+                        Toolkit
+                    </a>
+                </li>
+
+                <li>
                     <a href="counselling.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-extrabold transition-all flex items-center gap-2 group relative ${page === 'counselling.html' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-700 hover:text-indigo-700 hover:bg-indigo-50'}">
                         <i data-lucide="sparkles" class="w-4 h-4 text-orange-500 animate-pulse"></i>
                         Get Counselling
@@ -46,7 +53,7 @@ function renderNavbar() {
 
         <div id="overlay" class="lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
         
-        <ul id="nav-links" class="lg:hidden fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[70] flex flex-col pt-20 border-r border-slate-200 -translate-x-full transition-transform duration-300">
+        <ul id="nav-links" class="lg:hidden fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-[70] flex flex-col pt-20 border-r border-slate-200 -translate-x-full transition-transform duration-300 overflow-y-auto">
             <div class="absolute top-4 left-6 flex items-center text-lg font-extrabold tracking-tight">
                 <span class="text-slate-900">BootLearn-</span>
                 <span class="text-orange-600">MBA</span>
@@ -57,6 +64,7 @@ function renderNavbar() {
             <li><a href="lrdi.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold ${page === 'lrdi.html' ? 'text-indigo-600 bg-slate-50' : 'text-slate-700'}">LR-DI</a></li>
             <li><a href="verbal.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold ${page === 'verbal.html' ? 'text-indigo-600 bg-slate-50' : 'text-slate-700'}">Verbal</a></li>
             <li><a href="mocks.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold ${page === 'mocks.html' ? 'text-indigo-600 bg-slate-50' : 'text-slate-700'}">Mock Tests</a></li>
+            <li><a href="toolkit.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-bold ${page === 'toolkit.html' ? 'text-indigo-600 bg-slate-50' : 'text-slate-700'}">Aspirant Toolkit</a></li>
             <li>
                 <a href="counselling.html" class="block px-6 py-4 border-b border-slate-100 text-sm font-extrabold text-indigo-600 bg-indigo-50/50 flex items-center gap-2">
                     <i data-lucide="sparkles" class="w-4 h-4 text-orange-500"></i> Get Counselling
@@ -87,16 +95,21 @@ function setupMobileMenu() {
             navLinks.classList.add('translate-x-0');
             overlay.classList.remove('opacity-0', 'pointer-events-none');
             overlay.classList.add('opacity-100', 'pointer-events-auto');
+            document.body.style.overflow = 'hidden';
         } else {
             navLinks.classList.add('-translate-x-full');
             navLinks.classList.remove('translate-x-0');
             overlay.classList.add('opacity-0', 'pointer-events-none');
             overlay.classList.remove('opacity-100', 'pointer-events-auto');
+            document.body.style.overflow = 'auto';
         }
     }
 
     if (toggleBtn) toggleBtn.addEventListener('click', toggleMenu);
     if (overlay) overlay.addEventListener('click', toggleMenu);
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', toggleMenu);
+    });
 }
 
 // 4. AUTHENTICATION & ONBOARDING GATEKEEPER
@@ -139,7 +152,7 @@ async function checkAuthStatus() {
             </a>
         `;
 
-        const protectedPages = ['quant.html', 'lrdi.html', 'verbal.html', 'mocks.html', 'counselling.html'];
+        const protectedPages = ['quant.html', 'lrdi.html', 'verbal.html', 'mocks.html', 'counselling.html', 'toolkit.html'];
         document.querySelectorAll('a').forEach(link => {
             const href = link.getAttribute('href');
             if (href && protectedPages.includes(href)) {
