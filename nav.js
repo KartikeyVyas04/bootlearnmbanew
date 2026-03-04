@@ -26,22 +26,22 @@ function renderNavbar() {
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
 
-            <ul class="hidden lg:flex items-center gap-1 xl:gap-2">
-                <li><a href="index.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('index.html')}">Home</a></li>
-                <li><a href="quant.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('quant.html')}">Quant</a></li>
-                <li><a href="lrdi.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('lrdi.html')}">LR-DI</a></li>
-                <li><a href="verbal.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('verbal.html')}">Verbal</a></li>
-                <li><a href="mocks.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('mocks.html')}">Mock Tests</a></li>
+            <ul class="hidden lg:flex items-center gap-0.5 xl:gap-1">
+                <li><a href="index.html" class="px-3 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('index.html')}">Home</a></li>
+                <li><a href="quant.html" class="px-3 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('quant.html')}">Quant</a></li>
+                <li><a href="lrdi.html" class="px-3 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('lrdi.html')}">LR-DI</a></li>
+                <li><a href="verbal.html" class="px-3 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('verbal.html')}">Verbal</a></li>
+                <li><a href="mocks.html" class="px-3 py-2 rounded-lg text-sm font-bold transition-colors ${activeClass('mocks.html')}">Mocks</a></li>
                 
                 <li>
-                    <a href="toolkit.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2 ${activeClass('toolkit.html')}">
+                    <a href="toolkit.html" class="px-3 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-1.5 ${activeClass('toolkit.html')}">
                         <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i>
                         Toolkit
                     </a>
                 </li>
 
                 <li>
-                    <a href="counselling.html" class="px-3 xl:px-4 py-2 rounded-lg text-sm font-extrabold transition-all flex items-center gap-2 group relative ${page === 'counselling.html' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-700 hover:text-indigo-700 hover:bg-indigo-50'}">
+                    <a href="counselling.html" class="px-3 py-2 rounded-lg text-sm font-extrabold transition-all flex items-center gap-1.5 group relative ${page === 'counselling.html' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-700 hover:text-indigo-700 hover:bg-indigo-50'}">
                         <i data-lucide="sparkles" class="w-4 h-4 text-orange-500 animate-pulse"></i>
                         Get Counselling
                     </a>
@@ -107,6 +107,8 @@ function setupMobileMenu() {
 
     if (toggleBtn) toggleBtn.addEventListener('click', toggleMenu);
     if (overlay) overlay.addEventListener('click', toggleMenu);
+    
+    // Auto-close when clicking a link
     navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', toggleMenu);
     });
@@ -129,7 +131,7 @@ async function checkAuthStatus() {
         }
 
         const logoutBtnHTML = `
-            <button onclick="handleLogout()" class="ml-2 px-4 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100">
+            <button onclick="handleLogout()" class="ml-2 px-3 py-2 rounded-lg text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border border-red-100">
                 <i data-lucide="log-out" class="w-4 h-4"></i> Logout
             </button>
         `;
@@ -152,6 +154,7 @@ async function checkAuthStatus() {
             </a>
         `;
 
+        // PAGE PROTECTION LOGIC
         const protectedPages = ['quant.html', 'lrdi.html', 'verbal.html', 'mocks.html', 'counselling.html', 'toolkit.html'];
         document.querySelectorAll('a').forEach(link => {
             const href = link.getAttribute('href');
@@ -172,4 +175,5 @@ async function handleLogout() {
     window.location.href = 'login.html'; 
 }
 
+// 5. RUN ON LOAD
 renderNavbar();
