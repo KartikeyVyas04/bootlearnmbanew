@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="guard.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Expert Mentorship | BootLearn-MBA</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #ffffff;
+            color: #0f172a;
+        }
+        
+        /* Premium Background Pattern */
+        .bg-pattern {
+            background-image: radial-gradient(#e2e8f0 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            mask-image: linear-gradient(to bottom, white, transparent);
+        }
+
+        .feature-item {
+            transition: transform 0.3s ease;
+        }
+        .feature-item:hover {
+            transform: translateX(8px);
+        }
+        
+        /* Calendly container shadow to make it pop */
+        .calendly-wrapper {
+            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div id="navbar-container"></div>
+    <script src="nav.js"></script>
+
+    <div class="fixed inset-0 bg-pattern -z-10"></div>
+    <div class="fixed top-0 left-0 w-[500px] h-[500px] bg-indigo-50/60 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
+    <div class="fixed bottom-0 right-0 w-[500px] h-[500px] bg-orange-50/40 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
+
+    <main class="max-w-7xl mx-auto px-5 sm:px-8 pt-10 pb-24">
+        
+        <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center lg:items-start">
+            
+            <div class="w-full lg:w-5/12 pt-4 lg:pt-12">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-50 text-orange-600 text-[10px] font-extrabold uppercase tracking-[0.15em] mb-6 shadow-sm border border-orange-100">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
+                    Limited Slots Available
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-[800] tracking-tight leading-[1.1] mb-6 text-slate-900">
+                    Stop Guessing. <br>
+                    <span class="text-indigo-600">Start Strategizing.</span>
+                </h1>
+                
+                <p class="text-slate-500 text-base md:text-lg font-medium leading-relaxed mb-10">
+                    Book a 1-on-1 strategy session to decode your profile, identify target B-Schools, and build a month-by-month roadmap tailored specifically to your strengths.
+                </p>
+
+                <div class="space-y-6 mb-10">
+                    <div class="feature-item flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-slate-900 font-bold text-base mb-1">Profile Evaluation</h3>
+                            <p class="text-slate-500 text-sm font-medium leading-relaxed">Honest feedback on your academics, work-ex, and what percentile you actually need.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                            <i data-lucide="crosshair" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-slate-900 font-bold text-base mb-1">B-School Shortlisting</h3>
+                            <p class="text-slate-500 text-sm font-medium leading-relaxed">Stop applying blindly. We will create a realistic list of safe, target, and stretch colleges.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                            <i data-lucide="route" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-slate-900 font-bold text-base mb-1">Custom Prep Roadmap</h3>
+                            <p class="text-slate-500 text-sm font-medium leading-relaxed">A clear, actionable strategy on how to tackle VARC, DILR, and Quant based on your current level.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm shrink-0">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-emerald-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-900 text-sm font-bold">100% Confidential</p>
+                        <p class="text-slate-500 text-xs font-medium">Your academic and personal data is never shared.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="w-full lg:w-7/12 relative">
+                <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-[2.5rem] transform rotate-1 scale-105 opacity-10 blur-lg -z-10"></div>
+                
+                <div class="calendly-wrapper bg-white rounded-[2rem] border border-slate-200 overflow-hidden h-[650px] relative">
+                    
+                    <div id="calendly-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-0">
+                        <i data-lucide="loader-2" class="w-8 h-8 text-indigo-500 animate-spin mb-4"></i>
+                        <p class="text-slate-500 font-medium text-sm">Loading calendar...</p>
+                    </div>
+
+                    <div class="calendly-inline-widget relative z-10" 
+                         data-url="https://calendly.com/your-username?hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=0f172a&primary_color=4f46e5" 
+                         style="min-width:320px;height:100%;">
+                    </div>
+                    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                    
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Optional: Hide loader after a few seconds assuming Calendly has loaded
+        setTimeout(() => {
+            const loader = document.getElementById('calendly-loader');
+            if(loader) loader.style.opacity = '0';
+        }, 3000);
+    </script>
+</body>
+</html>
