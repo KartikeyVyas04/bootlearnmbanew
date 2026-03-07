@@ -47,7 +47,7 @@
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Mentorship Applications</h1>
                 <p class="text-slate-500 font-medium text-sm mt-1">Manage your waitlist and connect with students.</p>
             </div>
-            <button onclick="fetchApplications()" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors">
+            <button onclick="initAdmin()" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors">
                 <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh Data
             </button>
         </div>
@@ -85,100 +85,96 @@
         const supaKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrYXBjc3VidW91cHF1bnVyZ2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzYxNjMsImV4cCI6MjA4ODExMjE2M30.US-XWivfleScFchbKVqIJzFmgu2kOuTatmQXQgVo_K8';
         const supabase = window.supabase.createClient(supaUrl, supaKey);
 
-        // ⚠️ ENTER YOUR EXACT ADMIN EMAIL HERE
-        const ADMIN_EMAIL = 'connect.bootlearn@gmail.com'; 
+        // ⚠️ ENTER YOUR EXACT ADMIN EMAIL HERE (Make sure it stays inside the 'single quotes'!)
+        const ADMIN_EMAIL = 'connect.boootlearn@GMAIL.COM'; 
 
-        // 2. Admin Security Guard (Frontend Check)
-        async function checkAdminAccess() {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            
-            if (error || !session) {
-                window.location.href = 'login.html';
-                return false;
-            }
-
-            // Check if email matches AND is verified
-            const userEmail = session.user.email;
-            const isVerified = session.user.email_confirmed_at !== null;
-
-            if (userEmail !== ADMIN_EMAIL || !isVerified) {
-                alert("Unauthorized Area. Your account does not have Admin privileges.");
-                window.location.href = 'index.html';
-                return false;
-            }
-            return true;
-        }
-
-        // 3. Fetch Data Function
-        async function fetchApplications() {
+        // 2. Main Logic with Auto-Diagnostics
+        async function initAdmin() {
             const tableBody = document.getElementById('applicationsTableBody');
-            tableBody.innerHTML = `<tr><td colspan="6" class="p-8 text-center"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-indigo-500"></i></td></tr>`;
-            lucide.createIcons();
+            
+            try {
+                // Load icons safely
+                if (window.lucide) lucide.createIcons();
 
-            const { data, error } = await supabase
-                .from('mentorship_applications')
-                .select('*')
-                .order('created_at', { ascending: false }); 
+                // Step A: Check if anyone is logged in at all
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError || !session) {
+                    alert("Nobody is logged in! Redirecting to login page...");
+                    window.location.href = 'login.html';
+                    return;
+                }
 
-            if (error) {
-                console.error("Database Error:", error);
-                tableBody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 font-bold">Error loading data. Check console.</td></tr>`;
-                return;
+                const userEmail = session.user.email;
+                const isVerified = session.user.email_confirmed_at !== null;
+
+                // Step B: Verify if the logged-in person is YOU
+                if (userEmail !== ADMIN_EMAIL) {
+                    alert(`Access Denied: Logged in as ${userEmail}, but Admin is set to ${ADMIN_EMAIL}`);
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                // Step C: Verify if your email is confirmed
+                if (!isVerified) {
+                    alert("Access Denied: Your email matches, but you haven't clicked the verification link in your inbox!");
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                // Step D: If we pass all checks, fetch the data!
+                tableBody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-indigo-600 font-bold"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Loading student applications...</td></tr>`;
+                if (window.lucide) lucide.createIcons();
+
+                const { data, error: dbError } = await supabase
+                    .from('mentorship_applications')
+                    .select('*')
+                    .order('created_at', { ascending: false }); 
+
+                if (dbError) throw dbError;
+
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500 font-medium">No mentorship applications received yet.</td></tr>`;
+                    return;
+                }
+
+                // Render Data into the table
+                tableBody.innerHTML = '';
+                data.forEach(app => {
+                    const date = new Date(app.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                    const whatsappLink = `https://wa.me/${app.whatsapp_number.replace(/[^0-9]/g, '')}`;
+
+                    tableBody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0">
+                            <td class="p-4 md:p-5 font-bold text-slate-900">${app.full_name}</td>
+                            <td class="p-4 md:p-5">
+                                <a href="${whatsappLink}" target="_blank" class="flex items-center gap-1.5 text-emerald-600 font-bold hover:text-emerald-700 hover:underline">
+                                    <i data-lucide="phone" class="w-3.5 h-3.5"></i> ${app.whatsapp_number}
+                                </a>
+                            </td>
+                            <td class="p-4 md:p-5 font-medium text-slate-700"><span class="bg-slate-100 px-2.5 py-1 rounded text-xs font-bold border border-slate-200">${app.target_exam}</span></td>
+                            <td class="p-4 md:p-5 font-medium text-slate-600">${app.biggest_weakness}</td>
+                            <td class="p-4 md:p-5 text-slate-500 text-xs font-bold">${date}</td>
+                            <td class="p-4 md:p-5 text-center"><span class="inline-flex px-3 py-1 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[10px] font-extrabold uppercase tracking-wide">${app.status || 'Pending'}</span></td>
+                        </tr>
+                    `;
+                });
+                if (window.lucide) lucide.createIcons();
+
+            } catch (err) {
+                // If ANYTHING fails, print it to the table instead of spinning forever
+                console.error("Admin Page Error:", err);
+                tableBody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-600 font-bold bg-red-50 rounded-xl">System Error: ${err.message}</td></tr>`;
             }
-
-            if (!data || data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500 font-medium">No mentorship applications received yet.</td></tr>`;
-                return;
-            }
-
-            // Render Rows
-            tableBody.innerHTML = '';
-            data.forEach(app => {
-                const date = new Date(app.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-                const whatsappLink = `https://wa.me/${app.whatsapp_number.replace(/[^0-9]/g, '')}`;
-
-                const row = `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4 md:p-5 font-bold text-slate-900">${app.full_name}</td>
-                        <td class="p-4 md:p-5">
-                            <a href="${whatsappLink}" target="_blank" class="flex items-center gap-1.5 text-emerald-600 font-bold hover:text-emerald-700 hover:underline">
-                                <i data-lucide="phone" class="w-3.5 h-3.5"></i> ${app.whatsapp_number}
-                            </a>
-                        </td>
-                        <td class="p-4 md:p-5 font-medium text-slate-700">
-                            <span class="bg-slate-100 px-2.5 py-1 rounded text-xs font-bold border border-slate-200">${app.target_exam}</span>
-                        </td>
-                        <td class="p-4 md:p-5 font-medium text-slate-600">${app.biggest_weakness}</td>
-                        <td class="p-4 md:p-5 text-slate-500 text-xs font-bold">${date}</td>
-                        <td class="p-4 md:p-5 text-center">
-                            <span class="inline-flex px-3 py-1 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[10px] font-extrabold uppercase tracking-wide">
-                                ${app.status || 'Pending'}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-
-            lucide.createIcons();
         }
 
-        // 4. Logout Function
         async function adminLogout() {
             await supabase.auth.signOut();
             window.location.href = 'login.html';
         }
 
-        // 5. Initialization
-        async function init() {
-            lucide.createIcons();
-            const isAdmin = await checkAdminAccess();
-            if (isAdmin) {
-                fetchApplications();
-            }
-        }
-
-        init();
+        // Start everything
+        initAdmin();
     </script>
 </body>
 </html>
