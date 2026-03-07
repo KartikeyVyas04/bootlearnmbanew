@@ -70,8 +70,27 @@
                     Book a 1-on-1 strategy session to decode your profile, identify target B-Schools, and build a month-by-month roadmap tailored specifically to your strengths.
                 </p>
 
-                <div class="space-y-5 mb-10">
+                <div class="mb-10 p-6 md:p-8 bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100 rounded-[2rem] relative overflow-hidden shadow-sm group">
+                    <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-200/40 rounded-full blur-2xl pointer-events-none transition-transform duration-700 group-hover:scale-150"></div>
                     
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-full bg-slate-900 text-white flex items-center justify-center font-extrabold text-xl shadow-lg shrink-0 ring-4 ring-white">
+                            KV
+                        </div>
+                        <div>
+                            <h4 class="text-slate-900 font-extrabold text-lg">Kartikey Vyas</h4>
+                            <div class="flex flex-wrap items-center gap-2 mt-1">
+                                <span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200/50">99.61%ile QA</span>
+                                <span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-slate-200/50">97.60%ile Overall</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-slate-600 text-sm font-medium leading-relaxed italic relative z-10">
+                        "This platform is built on the exact resources and strategies I used to prepare for my MBA entrance exams. I hope it helps you achieve your dream B-school just as it helped me. Let's build your roadmap together."
+                    </p>
+                </div>
+                <div class="space-y-5 mb-10">
                     <div class="feature-item flex items-start gap-4">
                         <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
                             <i data-lucide="user-check" class="w-5 h-5"></i>
@@ -93,16 +112,6 @@
                     </div>
 
                     <div class="feature-item flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-slate-900 font-bold text-base mb-1">Deep Profile Evaluation</h3>
-                            <p class="text-slate-500 text-sm font-medium leading-relaxed">Honest feedback on your academics, work-ex, and the exact percentile you need to target.</p>
-                        </div>
-                    </div>
-
-                    <div class="feature-item flex items-start gap-4">
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                             <i data-lucide="crosshair" class="w-5 h-5"></i>
                         </div>
@@ -111,17 +120,6 @@
                             <p class="text-slate-500 text-sm font-medium leading-relaxed">Stop applying blindly. We will create a realistic list of safe, target, and stretch colleges.</p>
                         </div>
                     </div>
-
-                    <div class="feature-item flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                            <i data-lucide="route" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-slate-900 font-bold text-base mb-1">Custom Prep Roadmap</h3>
-                            <p class="text-slate-500 text-sm font-medium leading-relaxed">A clear, actionable strategy on how to tackle VARC, DILR, and Quant based on your level.</p>
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="p-5 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-4">
@@ -147,7 +145,7 @@
                     </div>
 
                     <div class="calendly-inline-widget relative z-10" 
-                         data-url="https://calendly.com/connect-bootlearn/30min?hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=0f172a&primary_color=4f46e5" 
+                         data-url="https://calendly.com/your-username?hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=0f172a&primary_color=4f46e5" 
                          style="min-width:320px;height:100%;">
                     </div>
                     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
@@ -161,7 +159,7 @@
     <script>
         lucide.createIcons();
 
-        // Optional: Hide loader after a few seconds assuming Calendly has loaded
+        // Hide loader after Calendly has loaded
         setTimeout(() => {
             const loader = document.getElementById('calendly-loader');
             if(loader) loader.style.opacity = '0';
